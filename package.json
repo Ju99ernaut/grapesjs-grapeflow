@@ -1,0 +1,51 @@
+{
+  "name": "grapesjs-grapeflow",
+  "version": "1.0.0",
+  "description": "grapeflow",
+  "main": "dist/grapesjs-grapeflow.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Github/Ju99ernaut/grapesjs-grapeflow.git"
+  },
+  "scripts": {
+    "start": "grapesjs-cli serve",
+    "build": "grapesjs-cli build && npm run build:css",
+    "build:css": "node-sass src/style/main.scss dist/grapesjs-grapeflow.min.css --output-style compressed",
+    "commands": "grapesjs-cli",
+    "bump": "npm version patch -m 'Bump v%s'"
+  },
+  "keywords": [
+    "grapesjs",
+    "plugin"
+  ],
+  "devDependencies": {
+    "grapesjs-cli": "^1.0.11",
+    "node-sass": "^4.13.1"
+  },
+  "peerDependencies": {
+    "grapesjs": "0.x"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "grapesjs": "^0.16.2",
+    "grapesjs-aviary": "^0.1.2",
+    "grapesjs-blocks-basic": "^0.1.8",
+    "grapesjs-blocks-flexbox": "^0.1.1",
+    "grapesjs-component-countdown": "^0.1.3",
+    "grapesjs-custom-code": "^0.1.2",
+    "grapesjs-lory-slider": "^0.1.5",
+    "grapesjs-navbar": "^0.1.5",
+    "grapesjs-parser-postcss": "^0.1.1",
+    "grapesjs-plugin-export": "^1.0.7",
+    "grapesjs-plugin-filestack": "^0.1.1",
+    "grapesjs-plugin-forms": "^1.0.5",
+    "grapesjs-style-filter": "^0.1.3",
+    "grapesjs-style-gradient": "^1.0.5",
+    "grapesjs-tabs": "^0.2.2",
+    "grapesjs-tooltip": "^0.1.5",
+    "grapesjs-touch": "^0.1.1",
+    "grapesjs-tui-image-editor": "^0.1.3",
+    "grapesjs-typed": "^1.0.5",
+    "split.js": "^1.5.11"
+  }
+}
