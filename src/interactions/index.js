@@ -2,7 +2,7 @@ class Interactions {
     constructor(editor) {
         this.editor = editor;
         this.isShowing = true;
-        this.buildInteractions;
+        this.buildInteractions();
     }
 
     buildInteractions() {

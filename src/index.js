@@ -11,7 +11,8 @@ import pluginTooltip from 'grapesjs-tooltip';
 import pluginBlocksFlexbox from 'grapesjs-blocks-flexbox';
 import pluginTouch from 'grapesjs-touch';
 import pluginStyleFilter from 'grapesjs-style-filter';
-import pluginStyleGradient from 'grapesjs-style-gradient';
+//import pluginStyleGradient from 'grapesjs-style-gradient';
+import pluginBg from 'grapesjs-style-bg';
 import pluginParserPostcss from 'grapesjs-parser-postcss';
 import pluginCustomCode from 'grapesjs-custom-code';
 import pluginTyped from 'grapesjs-typed';
@@ -24,6 +25,7 @@ import components from './components';
 import panels from './panels';
 import styles from './styles';
 import en from './locale/en';
+import CustomMenu from './custom/index';
 
 export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
   let config = opts;
@@ -111,21 +113,15 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
 
     // `grapesjs-plugin-export` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    exportOpts: {
-      btnLabel: 'Download Zip',
-      preHtml: `<!doctype html>
-                    <html>
-                    <head>
-                    <link rel="stylesheet" href="css/style.css">
-                    </head>
-                    <body>`,
-      postHtml: `</body>
-                </html>`
-    },
+    exportOpts: {},
 
     // `grapesjs-tabs` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    tabsOpts: {},
+    tabsOpts: {
+      tabsBlock: {
+        category: 'Extra',
+      }
+    },
 
     // `grapesjs-tooltip` plugin options
     // By setting this option to `false` will avoid loading the plugin
@@ -145,11 +141,13 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
 
     // `grapesjs-style-gradient` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    gradientOpts: {
-      colorPicker: 'default',
-      grapickOpts: {
-        min: 1,
-        max: 99,
+    bgOpts: {
+      styleGradientOpts: {
+        colorPicker: 'default',
+        grapickOpts: {
+          min: 1,
+          max: 99,
+        }
       }
     },
 
@@ -220,7 +218,7 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
     flexboxOpts,
     touchOpts,
     filterOpts,
-    gradientOpts,
+    bgOpts,
     postcssOpts,
     codeOpts,
     typedOpts,
@@ -238,7 +236,7 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
   flexboxOpts && pluginBlocksFlexbox(editor, flexboxOpts);
   touchOpts && pluginTouch(editor, touchOpts);
   filterOpts && pluginStyleFilter(editor, filterOpts);
-  gradientOpts && pluginStyleGradient(editor, gradientOpts);
+  bgOpts && pluginBg(editor, bgOpts);
   postcssOpts && pluginParserPostcss(editor, postcssOpts);
   codeOpts && pluginCustomCode(editor, codeOpts);
   typedOpts && pluginTyped(editor, typedOpts);
@@ -267,6 +265,33 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
   editor.I18n && editor.I18n.addMessages({
     en,
     ...options.i18n,
+  });
+
+  //Load Custom Menu
+  editor.on('load', function () {
+    let customMenu = null;
+    if (!customMenu) customMenu = new CustomMenu();
+  })
+
+  //Style manager extensions
+  editor.StyleManager.addProperty('extra', {
+    name: 'Filter',
+    property: 'filter',
+    type: 'filter',
+    full: 1,
+  });
+
+  //Close Block Manager Panes
+  editor.BlockManager.getCategories().each(function (ctg) {
+    ctg.set('open', false);
+  });
+
+  // Store and load events
+  editor.on('storage:load', function (e) {
+    console.log('Loaded ', e)
+  });
+  editor.on('storage:store', function (e) {
+    console.log('Stored ', e)
   });
 
 });

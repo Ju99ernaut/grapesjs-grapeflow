@@ -438,7 +438,7 @@ export default (editor, config) => {
     }, {
       name: config.textDecorations,
       open: false,
-      buildProps: ['cursor', 'background-color', 'opacity', 'box-shadow', 'background'],
+      buildProps: ['cursor', 'background-color', 'opacity', 'box-shadow', 'background-bg'],
       properties: [{
         property: 'cursor',
         type: 'radio',
@@ -516,28 +516,9 @@ export default (editor, config) => {
           }
         ],
       }, {
+        id: 'background-bg',
         property: 'background',
-        properties: [{
-            name: 'Image',
-            property: 'background-image'
-          },
-          {
-            name: 'Repeat',
-            property: 'background-repeat'
-          },
-          {
-            name: 'Position',
-            property: 'background-position'
-          },
-          {
-            name: 'Attachment',
-            property: 'background-attachment'
-          },
-          {
-            name: 'Size',
-            property: 'background-size'
-          }
-        ],
+        type: 'bg',
       }, ]
     }, {
       name: config.textExtra,
@@ -586,9 +567,6 @@ export default (editor, config) => {
           }
         ],
       }]
-    }, {
-      name: 'Gradient',
-      open: false,
     }
   ]);
 }

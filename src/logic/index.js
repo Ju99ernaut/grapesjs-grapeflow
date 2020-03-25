@@ -2,7 +2,7 @@ class Logic {
     constructor(editor) {
         this.editor = editor;
         this.isShowing = true;
-        this.buildLogic;
+        this.buildLogic();
     }
 
     buildLogic() {

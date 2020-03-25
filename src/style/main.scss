@@ -129,7 +129,7 @@ html {
   position: absolute;
   left: -40px;
   top: 40px;
-  background-color: #403444;
+  background-color: #3a3444;
   width: 40px;
   height: 94%;
   transition: all 0.5s ease;
@@ -164,7 +164,7 @@ html {
   top: 40px;
   width: 200px;
   height: 94%;
-  color: cornsilk;
+  color: #9f99bd;
   background-color: #403444f3;
   box-shadow: 0 2px 3px 1px #161616, 0 6px 0px 0px #403444f3;
   -webkit-box-shadow: 0 2px 3px 1px #161616, 0 6px 0px 0px #403444f3;
@@ -200,11 +200,11 @@ html {
   margin: 0;
   width: 40px;
   padding: 10px;
-  color: rgba(250, 201, 201, 0.877);
+  color: #9f99bd;
 }
 
 .left-menu-icons:hover {
-  color: rgb(231, 143, 248);
+  color: #a67ad9;
 }
 
 .left.gjs-am-preview-cont {
@@ -215,68 +215,55 @@ html {
   width: 30%;
 }
 
-#left-menu-code {
-  margin-left: 5px;
-  padding-top: 7px;
-  padding-left: 7px;
-  position: absolute;
-  bottom: 5px;
-  left: 1px;
-  color: rgba(250, 201, 201, 0.877);
-}
-
-#left-menu-code:hover {
-  color: rgb(231, 143, 248);
-}
-
-#left-menu-code-e {
-  margin-left: 5px;
-  margin-bottom: 30px;
-  padding-top: 7px;
-  padding-left: 7px;
-  position: absolute;
-  bottom: 5px;
-  left: 1px;
-  color: rgba(250, 201, 201, 0.877);
-}
-
-#left-menu-code-e:hover {
-  color: rgb(231, 143, 248);
-}
-
 #left-menu-abs {
-  margin-left: 5px;
-  margin-bottom: 60px;
+  margin-bottom: 15px;
   padding-top: 7px;
-  padding-left: 7px;
+  padding-left: 10px;
   position: absolute;
   bottom: 5px;
-  left: 1px;
-  color: rgba(250, 201, 201, 0.877);
+  left: 0px;
+  color: #9f99bd;
 }
 
 #left-menu-abs:hover {
-  color: rgb(231, 143, 248);
+  color: #a67ad9;
 }
 
 #left-menu-trans {
-  margin-left: 5px;
-  margin-bottom: 90px;
+  margin-bottom: 50px;
   padding-top: 7px;
-  padding-left: 7px;
+  padding-left: 10px;
   position: absolute;
   bottom: 5px;
-  left: 1px;
-  color: rgba(250, 201, 201, 0.877);
+  left: 0px;
+  color: #9f99bd;
 }
 
 #left-menu-trans:hover {
-  color: rgb(231, 143, 248);
+  color: #a67ad9;
+}
+
+#left-menu-cls {
+  margin-bottom: 0px;
+  padding-left: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  min-height: 10px;
+  max-height: 20px;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  color: #9f99bd;
+  background-color: #362c3a;
+}
+
+#left-menu-cls:hover {
+  color: #a67ad9;
 }
 
 .menu-header {
   padding-left: 5px;
-  color: rgb(248, 203, 203);
+  color: #9f99bd;
   font-size: 16px;
   font-weight: bold;
 }
@@ -287,7 +274,7 @@ html {
   border-bottom: 1px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: rgb(252, 230, 230);
+  color: #9f99bd;
 }
 
 .gjs-title.page:hover {
@@ -296,21 +283,21 @@ html {
   border-bottom: 1px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: rgb(252, 230, 230);
+  color: #a67ad9;
 }
 
 .gjs-title.project:hover {
   background-color: #5c505f56;
-  color: rgb(252, 230, 230);
+  color: #a67ad9;
 }
 
 .gjs-title.page.page-open {
   padding: 9px 10px 9px 30px;
-  background-color: #6c5a7249;
+  background-color: #6c5a72a8;
   border-bottom: 2px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: rgb(236, 167, 224);
+  color: #d8a0e5;
 }
 
 .page-icon {
@@ -319,7 +306,7 @@ html {
 }
 
 .close {
-  color: rgb(175, 175, 175);
+  color: #9f99bd;
   font-size: 15px;
   float: right;
 }
