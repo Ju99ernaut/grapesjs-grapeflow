@@ -15,6 +15,7 @@ export default (editor, config) => {
   btnImp.onclick = e => {
     editor.setComponents(viewerEditor.getValue().trim());
     modal.close();
+    console.log('Code imported');
   };
 
   // Init code viewer

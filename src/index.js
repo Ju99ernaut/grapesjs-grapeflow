@@ -4,7 +4,7 @@ import pluginNavbar from 'grapesjs-navbar';
 import pluginCountdown from 'grapesjs-component-countdown';
 import pluginForms from 'grapesjs-plugin-forms';
 import pluginExport from 'grapesjs-plugin-export';
-import pluginAviary from 'grapesjs-aviary';
+//import pluginAviary from 'grapesjs-aviary';
 import pluginFilestack from 'grapesjs-plugin-filestack';
 import pluginTabs from 'grapesjs-tabs';
 import pluginTooltip from 'grapesjs-tooltip';
@@ -24,10 +24,11 @@ import blocks from './blocks';
 import components from './components';
 import panels from './panels';
 import styles from './styles';
+import storage from './storage';
 import en from './locale/en';
 import CustomMenu from './custom/index';
 
-export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
+export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) => {
   let config = opts;
 
   const options = {
@@ -92,8 +93,43 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
     // Text for Extra sector in Style Manager
     textExtra: 'Extra',
 
+    // Text for Assets menu
+    textAssets: 'Assets',
+
+    // Text for CMS menu
+    textCMS: 'CMS',
+
+    // Text for Manager menu
+    textManager: 'Pages',
+
+    // Text for Settings menu
+    textSettings: 'Editor Settings',
+
+    // Text for Templates menu
+    textTemplates: 'Templates',
+
+    // Text for Blocks menu
+    textBlocks: 'Add',
+
+    // Text for Layers menu
+    textLayers: 'Layout',
+
     // Use custom set of sectors for the Style Manager
     customStyleManager: [],
+
+    // Flow Storage options
+    urlStorePages: '',
+    urlLoadPages: '',
+    urlStoreProjects: '',
+    urlLoadProjects: '',
+    urlStoreTemplates: '',
+    urlLoadTemplates: '',
+    urlStoreAssets: '',
+    urlLoadAssets: '',
+    urlStoreLogic: '',
+    urlLoadLogic: '',
+    urlStoreSettings: '',
+    urlLoadSettings: '',
 
     // `grapesjs-blocks-basic` plugin options
     // By setting this option to `false` will avoid loading the plugin
@@ -113,7 +149,11 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
 
     // `grapesjs-plugin-export` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    exportOpts: {},
+    exportOpts: {
+      btnLabel: '<i class="fa fa-link-cloud-upload"></i>Export to ZIP',
+      filenamePfx: 'grapeflow_template',
+      filename: null, //todo function for generating file names eg. editor => 'file.zip'
+    },
 
     // `grapesjs-tabs` plugin options
     // By setting this option to `false` will avoid loading the plugin
@@ -191,7 +231,7 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
     // `grapesjs-aviary` plugin options, disabled by default
     // Aviary library should be included manually
     // By setting this option to `false` will avoid loading the plugin
-    aviaryOpts: 0,
+    //aviaryOpts: 0,
 
     // `grapesjs-plugin-filestack` plugin options, disabled by default
     // Filestack library should be included manually
@@ -211,7 +251,7 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
     countdownOpts,
     formsOpts,
     exportOpts,
-    aviaryOpts,
+    //aviaryOpts,
     filestackOpts,
     tabsOpts,
     tooltipOpts,
@@ -243,7 +283,7 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
   exportOpts && pluginExport(editor, exportOpts);
   imgeditorOpts && pluginImageEditor(editor, imgeditorOpts);
   sliderOpts && pluginLorySlider(editor, sliderOpts);
-  aviaryOpts && pluginAviary(editor, aviaryOpts);
+  //aviaryOpts && pluginAviary(editor, aviaryOpts);
   filestackOpts && pluginFilestack(editor, filestackOpts);
 
   // Load components
@@ -260,6 +300,9 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
 
   // Load styles
   styles(editor, config);
+
+  // Load storage
+  storage(editor, config);
 
   // Load i18n files
   editor.I18n && editor.I18n.addMessages({
@@ -290,8 +333,14 @@ export default grapesjs.plugins.add('gjs-grapeflow', (editor, opts = {}) => {
   editor.on('storage:load', function (e) {
     console.log('Loaded ', e)
   });
+  editor.on('storage:error:load', function (e) {
+    console.log('Loading error ', e)
+  });
   editor.on('storage:store', function (e) {
     console.log('Stored ', e)
+  });
+  editor.on('storage:error:store', function (e) {
+    console.error('Storage error ', e)
   });
 
 });

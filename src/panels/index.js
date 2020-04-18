@@ -4,7 +4,9 @@ import {
   cmdDeviceTablet,
   cmdDeviceMobile,
   cmdClear,
+  cmdInteractions,
   cmdEdit,
+  cmdSave,
   cmdLaunch
 } from './../consts';
 
@@ -18,7 +20,6 @@ export default (editor, config) => {
   const edt = 'code-editor';
   const osm = 'open-sm';
   const otm = 'open-tm';
-  const oim = 'open-im';
   const olm = 'open-logic';
   const ola = 'open-layers';
   const obl = 'open-blocks';
@@ -80,6 +81,13 @@ export default (editor, config) => {
       },
       command: e => e.runCommand(cmdClear),
     }, {
+      id: cmdSave,
+      className: 'fa fa-cloud-upload',
+      attributes: {
+        title: 'save',
+      },
+      command: e => e.runCommand(cmdSave),
+    }, {
       id: cmdLaunch,
       className: 'fa fa-rocket',
       attributes: {
@@ -100,22 +108,23 @@ export default (editor, config) => {
         className: 'fa fa-cog',
       },
       {
-        id: oim,
-        //command: oim,
+        id: 'open-im',
+        command: cmdInteractions,
         className: 'fa fa-bolt',
         attributes: {
           title: 'interactions',
         },
-      }, {
-        id: olm,
-        //command: olm,
-        className: 'fa fa-file-code-o',
-        attributes: {
-          title: 'logic',
-        },
-      }, {
+      }, //{
+      //id: olm,
+      //command: olm,
+      //className: 'fa fa-file-code-o',
+      //attributes: {
+      //  title: 'logic',
+      //},
+      //}, 
+      {
         id: edt,
-        className: 'fa fa-pencil-square',
+        className: 'fa fa-file-code-o',
         command: cmdEdit,
         attributes: {
           title: 'code editor',

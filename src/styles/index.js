@@ -379,16 +379,16 @@ export default (editor, config) => {
             property: 'margin-top'
           },
           {
+            name: 'Left',
+            property: 'margin-left'
+          },
+          {
             name: 'Right',
             property: 'margin-right'
           },
           {
             name: 'Bottom',
             property: 'margin-bottom'
-          },
-          {
-            name: 'Left',
-            property: 'margin-left'
           }
         ],
       }, {
@@ -398,16 +398,16 @@ export default (editor, config) => {
             property: 'padding-top'
           },
           {
+            name: 'Left',
+            property: 'padding-left'
+          },
+          {
             name: 'Right',
             property: 'padding-right'
           },
           {
             name: 'Bottom',
             property: 'padding-bottom'
-          },
-          {
-            name: 'Left',
-            property: 'padding-left'
           }
         ],
       }]

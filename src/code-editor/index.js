@@ -17,6 +17,10 @@ class CodeEditor {
         })
     }
 
+    /**
+     * Triggered inside buildCodePanel
+     * @param {String} type Code editor type ,html or css
+     */
     buildCodeEditor(type) {
         let codeEditor = this.editor.CodeManager.getViewer('CodeMirror').clone()
         codeEditor.set({
@@ -32,11 +36,17 @@ class CodeEditor {
         return codeEditor
     }
 
+    /**
+     * Triggered in buildCodePanel
+     * @param {String} type 
+     * @param {Object} editor 
+     * @param {Object} textArea Text area DOM element 
+     */
     buildSection(type, editor, textArea) {
         const section = document.createElement('section')
         section.innerHTML = `<div class="codepanel-separator">
         <div class="codepanel-label">${type}</div>
-        <button id="cp-save-${type}">Save</button>
+        <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save</button>
         </div>`
         section.appendChild(textArea)
         this.codePanel.appendChild(section)
@@ -112,6 +122,7 @@ class CodeEditor {
         if (!htmlCode || htmlCode === this.previousHtmlCode) return
         this.previousHtmlCode = htmlCode
         this.editor.setComponents(htmlCode)
+        console.log("Changes applied")
     }
 
     updateCss() {
@@ -119,6 +130,7 @@ class CodeEditor {
         if (!cssCode || cssCode === this.previousCssCode) return
         this.previousCssCode = cssCode
         this.editor.setStyle(cssCode)
+        console.log("Changes applied")
     }
 
     updateEditorContents() {

@@ -14,7 +14,7 @@ class CustomMenu {
     }
 
     buildMenuModules() {
-        let managerModule = new Manager([], []);
+        let managerModule = new Manager([]);
         let assetsModule = new Assets();
         let templatesModule = new Templates([]);
         let cmsModule = new CMS();
@@ -36,9 +36,9 @@ class CustomMenu {
             labelText: "Workspace",
         };
         let projectTab = {
-            id: "projects",
+            id: "properties",
             name: "pages",
-            labelText: "Projects",
+            labelText: "Properties",
         }
         let pages = this.buildTabMenu("pages", "Pages", [pageTab, projectTab]);
         let cms = this.buildSimpleMenu("cms", "CMS");
@@ -54,6 +54,7 @@ class CustomMenu {
         }
         let assets = this.buildTabMenu("assets", "Assets", [localTab, pixabayTab]);
         let templates = this.buildSimpleMenu("templates", "Templates");
+        let flow = this.buildSimpleMenu("logic", "Logic");
         let settings = this.buildSimpleMenu("settings", "Editor Settings");
         //Append to container
         cMenu.appendChild(blocks);
@@ -62,6 +63,7 @@ class CustomMenu {
         cMenu.appendChild(cms);
         cMenu.appendChild(assets);
         cMenu.appendChild(templates);
+        cMenu.appendChild(flow);
         cMenu.appendChild(settings);
         cMenu.appendChild(leftBar);
         cMenu.appendChild(hover);
@@ -87,7 +89,7 @@ class CustomMenu {
         cont.appendChild(blocks);
         let layers = this.buildLeftBarItems("", "fa-bars ", "Layers", (e) => this.slideIn(e));
         cont.appendChild(layers);
-        let pages = this.buildLeftBarItems("", "fa-file-o ", "Pages", (e) => this.slideIn(e));
+        let pages = this.buildLeftBarItems("", "fa-file ", "Pages", (e) => this.slideIn(e));
         cont.appendChild(pages);
         let cms = this.buildLeftBarItems("", "fa-database ", "CMS", (e) => this.slideIn(e));
         cont.appendChild(cms);
@@ -95,6 +97,8 @@ class CustomMenu {
         cont.appendChild(assets);
         let templates = this.buildLeftBarItems("", "fa-shopping-cart ", "Templates", (e) => this.slideIn(e));
         cont.appendChild(templates);
+        let flow = this.buildLeftBarItems("", "fa-microchip ", "Logic", (e) => this.slideIn(e));
+        cont.appendChild(flow);
         let settings = this.buildLeftBarItems("", "fa-cogs ", "Settings", (e) => this.slideIn(e));
         cont.appendChild(settings);
         let translate = this.buildLeftBarItems("left-menu-trans", "fa-hand-rock-o ", "Translate mode", this.setDragMode);
@@ -187,12 +191,14 @@ class CustomMenu {
             document.getElementById('left-menu-trans').className = document.getElementById('left-menu-trans').className
                 .replace("gjs-pn-active", "");
             this.abSet = !this.abSet;
+            console.warn("More design freedom at the cost of responsiveness");
         } else if (mode == 'translate' && !this.trnSet) {
             editor.getModel().set('dmode', mode);
             document.getElementById('left-menu-trans').className += "gjs-pn-active";
             document.getElementById('left-menu-abs').className = document.getElementById('left-menu-abs').className
                 .replace("gjs-pn-active", "");
             this.trnSet = !this.trnSet;
+            console.warn("You may have to cycle all device modes and fix alignment issues");
         } else {
             editor.getModel().set('dmode', 'default');
             document.getElementById('left-menu-abs').className = document.getElementById('left-menu-abs').className
@@ -201,6 +207,7 @@ class CustomMenu {
                 .replace("gjs-pn-active", "");
             this.abSet = false;
             this.trnSet = false;
+            console.log("Default drag mode set");
         }
     }
 
@@ -274,6 +281,7 @@ class CustomMenu {
 
     closeLeftMenu() {
         document.getElementById('left-menu').style.left = "-40px";
+        editor.getModel().set('dmode', 'default');
         this.closeAll();
     }
 }
