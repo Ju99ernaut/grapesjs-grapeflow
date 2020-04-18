@@ -1,5 +1,9 @@
 //*Page and project manager
 //Pages Manager
+import {
+    pageTab,
+    propertiesTab
+} from './../consts';
 
 class Manager {
     constructor(projects) {
@@ -63,23 +67,24 @@ class Manager {
         //document.querySelector('#properties-tab').appendChild(iField);
         //let projectsMenu = this.buildProjectsSection(projects); //? Projects no longer supported
         //todo putting appending projects to a modal...or start menu
-        let propertiesMenu = this.buildPropertiesSection();
-        document.querySelector('#properties-tab').appendChild(propertiesMenu);
-        let pagesMenu = this.buildPagesSection(name);
-        document.querySelector('#workspace-tab').appendChild(pagesMenu);
-        document.getElementById('workspace').checked = true;
-        document.getElementById('properties-tab').style.display = "none";
-        document.getElementById('workspace').addEventListener('click', () => this.pageTabs());
-        document.getElementById('properties').addEventListener('click', () => this.pageTabs());
+        const pt = document.getElementById(propertiesTab.id + '-tab');
+        pt.appendChild(this.buildPropertiesSection());
+        const wt = document.getElementById(pageTab.id + '-tab');
+        wt.appendChild(this.buildPagesSection(name));
+        const w = document.getElementById(pageTab.id);
+        w.checked = true;
+        pt.style.display = "none";
+        w.addEventListener('click', () => this.pageTabs());
+        document.getElementById(propertiesTab.id).addEventListener('click', () => this.pageTabs());
     }
 
     pageTabs() {
-        if (document.getElementById('workspace').checked) {
-            document.getElementById('workspace-tab').style.display = "block";
-            document.getElementById('properties-tab').style.display = "none";
+        if (document.getElementById(pageTab.id).checked) {
+            document.getElementById(pageTab.id + '-tab').style.display = "block";
+            document.getElementById(propertiesTab.id + '-tab').style.display = "none";
         } else {
-            document.getElementById('workspace-tab').style.display = "none";
-            document.getElementById('properties-tab').style.display = "block";
+            document.getElementById(pageTab.id + '-tab').style.display = "none";
+            document.getElementById(propertiesTab.id + '-tab').style.display = "block";
         }
     }
 

@@ -1,3 +1,8 @@
+import {
+    localTab,
+    libraryTab
+} from './../consts';
+
 class Assets {
     constructor() {
         this.base = 'http://127.0.0.1:8000'; //todo add this to config 
@@ -46,21 +51,20 @@ class Assets {
         const assetManager = editor.AssetManager;
         const assets = assetManager.getAll();
 
-        let assetsMenu = this.buildAssets(assets);
-        document.querySelector('#local-tab').appendChild(assetsMenu);
-        document.getElementById('local').checked = true;
-        document.getElementById('local').addEventListener('click', () => this.assetTabs());
-        document.getElementById('pixabay').addEventListener('click', () => this.assetTabs());
+        document.getElementById(localTab.id + '-tab').appendChild(this.buildAssets(assets));
+        const local = document.getElementById(localTab.id);
+        local.checked = true;
+        local.addEventListener('click', () => this.assetTabs());
+        document.getElementById(libraryTab.id).addEventListener('click', () => this.assetTabs());
+        document.getElementById(libraryTab.id + '-tab').style.display = "none";
         editor.on('asset:upload:response', res => {
             const url = this.base + res.file;
             const as = editor.AssetManager;
             as.add(url);
-            const asset = as.get(url);
             const assets = assetManager.getAll();
-            let assetsMenu = this.buildAssets(assets);
-            const tab = document.querySelector('#local-tab');
+            const tab = document.getElementById(localTab.id + '-tab');
             tab.innerHTML = "";
-            tab.appendChild(assetsMenu);
+            tab.appendChild(this.buildAssets(assets));
             console.log("Asset upload success");
         });
         editor.on('asset:upload:error', err => {
@@ -69,12 +73,12 @@ class Assets {
     }
 
     assetTabs() {
-        if (document.getElementById('local').checked) {
-            document.getElementById('local-tab').style.display = "block";
-            document.getElementById('pixabay-tab').style.display = "none";
+        if (document.getElementById(localTab.id).checked) {
+            document.getElementById(localTab.id + '-tab').style.display = "block";
+            document.getElementById(libraryTab.id + '-tab').style.display = "none";
         } else {
-            document.getElementById('local-tab').style.display = "none";
-            document.getElementById('pixabay-tab').style.display = "block";
+            document.getElementById(localTab.id + '-tab').style.display = "none";
+            document.getElementById(libraryTab.id + '-tab').style.display = "block";
         }
     }
 
@@ -85,18 +89,18 @@ class Assets {
      * @param {String} dim Displays the dimensions of the image
      */
     buildAsset(url, name, dim) {
-        let cont = document.createElement('div');
+        const cont = document.createElement('div');
         cont.className += "gjs-am-asset gjs-am-asset-image";
 
-        let previewCont = document.createElement('div');
+        const previewCont = document.createElement('div');
         previewCont.className += "left gjs-am-preview-cont";
 
-        let preview = document.createElement('img');
+        const preview = document.createElement('img');
         preview.alt = name;
         preview.style.width = "100%";
         preview.style.height = "100%";
         preview.style.objectFit = "contain";
-        preview.style.backgroundColor = "#352b38ce"
+        preview.style.backgroundColor = "#352b38ce";
         preview.src = url;
 
         //let previewBg = document.createElement('div');
@@ -106,15 +110,15 @@ class Assets {
         previewCont.appendChild(preview);
         //previewCont.appendChild(previewBg);
 
-        let meta = document.createElement('div');
+        const meta = document.createElement('div');
         meta.className += "left gjs-am-meta";
 
-        let nameImg = document.createElement('div');
+        const nameImg = document.createElement('div');
         nameImg.className += "gjs-am-name";
         nameImg.title = name;
         nameImg.innerHTML = name;
 
-        let dimensions = document.createElement('div');
+        const dimensions = document.createElement('div');
         dimensions.className += "gjs-am-dimensions";
         //dimensions.style.width = "30%";
         dimensions.innerHTML = dim;
@@ -133,7 +137,7 @@ class Assets {
      * @param {Object} assets gjs assets object
      */
     buildAssets(assets) {
-        let cont = document.createElement('div');
+        const cont = document.createElement('div');
         cont.className += "gjs-am-assets";
         cont.style.overflow = "visible";
         for (let i = 0; i < assets.length; i++) {

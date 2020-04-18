@@ -5,6 +5,10 @@ class Templates {
         this.buildTemplatesPanel(templates);
     }
 
+    /**
+     * Templates are basically blocks with more complete functionality...ie. mini apps
+     * @param {Object} templates block object
+     */
     buildTemplatesPanel(templates) {
         let templatesMenu = this.buildTemplates(templates);
         document.querySelector('#templates').appendChild(templatesMenu);

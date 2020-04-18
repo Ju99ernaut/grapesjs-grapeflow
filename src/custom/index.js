@@ -3,6 +3,17 @@ import Assets from './assets';
 import Templates from './templates';
 import CMS from './cms';
 import Settings from './settings';
+import {
+    pageTab,
+    propertiesTab,
+    basicBlocksTab,
+    bs4BlocksTab,
+    extraBlocksTab,
+    localTab,
+    libraryTab,
+    customBlocksTab,
+    marketBlocksTab
+} from './../consts';
 
 class CustomMenu {
     constructor() {
@@ -22,51 +33,21 @@ class CustomMenu {
     }
 
     buildCustomMenu() {
-        let cMenu = document.createElement('div');
+        const cMenu = document.createElement('div');
         //Add hover target
-        let hover = this.buildHoverTarget();
         //Add left bar
-        let leftBar = this.buildLeftBar();
         //Add menus
-        let blocks = this.buildSimpleMenu("blocks", "Add");
-        let layers = this.buildSimpleMenu("layers", "Layout");
-        let pageTab = {
-            id: "workspace",
-            name: "pages",
-            labelText: "Workspace",
-        };
-        let projectTab = {
-            id: "properties",
-            name: "pages",
-            labelText: "Properties",
-        }
-        let pages = this.buildTabMenu("pages", "Pages", [pageTab, projectTab]);
-        let cms = this.buildSimpleMenu("cms", "CMS");
-        let localTab = {
-            id: "local",
-            name: "assets",
-            labelText: "Local",
-        };
-        let pixabayTab = {
-            id: "pixabay",
-            name: "assets",
-            labelText: "Pixabay",
-        }
-        let assets = this.buildTabMenu("assets", "Assets", [localTab, pixabayTab]);
-        let templates = this.buildSimpleMenu("templates", "Templates");
-        let flow = this.buildSimpleMenu("logic", "Logic");
-        let settings = this.buildSimpleMenu("settings", "Editor Settings");
         //Append to container
-        cMenu.appendChild(blocks);
-        cMenu.appendChild(layers);
-        cMenu.appendChild(pages);
-        cMenu.appendChild(cms);
-        cMenu.appendChild(assets);
-        cMenu.appendChild(templates);
-        cMenu.appendChild(flow);
-        cMenu.appendChild(settings);
-        cMenu.appendChild(leftBar);
-        cMenu.appendChild(hover);
+        cMenu.appendChild(this.buildTabMenu("blocks", "Add", [basicBlocksTab, bs4BlocksTab, extraBlocksTab], true));
+        cMenu.appendChild(this.buildSimpleMenu("layers", "Layout"));
+        cMenu.appendChild(this.buildTabMenu("pages", "Pages", [pageTab, propertiesTab]));
+        cMenu.appendChild(this.buildSimpleMenu("cms", "CMS"));
+        cMenu.appendChild(this.buildTabMenu("assets", "Assets", [localTab, libraryTab], true));
+        cMenu.appendChild(this.buildTabMenu("templates", "Templates", [customBlocksTab, marketBlocksTab], true));
+        cMenu.appendChild(this.buildSimpleMenu("logic", "Logic", true));
+        cMenu.appendChild(this.buildSimpleMenu("settings", "Editor Settings", true));
+        cMenu.appendChild(this.buildLeftBar());
+        cMenu.appendChild(this.buildHoverTarget());
         document.body.appendChild(cMenu);
         this.buildMenuModules();
         document.getElementById('gjs').addEventListener("click", () => this.closeLeftMenu());
@@ -74,101 +55,119 @@ class CustomMenu {
     }
 
     buildHoverTarget() {
-        let cont = document.createElement('div');
+        const cont = document.createElement('div');
         cont.id = "target";
         cont.addEventListener('mouseover', this.openLeftMenu);
         return cont;
     }
 
     buildLeftBar() {
-        let cont = document.createElement('div');
-        //cont.addEventListener("click", () => this.closeLeftMenu());
+        const cont = document.createElement('div');
         cont.id = "left-menu";
         //Add Items
-        let blocks = this.buildLeftBarItems("", "fa-th-large ", "Blocks", (e) => this.slideIn(e));
-        cont.appendChild(blocks);
-        let layers = this.buildLeftBarItems("", "fa-bars ", "Layers", (e) => this.slideIn(e));
-        cont.appendChild(layers);
-        let pages = this.buildLeftBarItems("", "fa-file ", "Pages", (e) => this.slideIn(e));
-        cont.appendChild(pages);
-        let cms = this.buildLeftBarItems("", "fa-database ", "CMS", (e) => this.slideIn(e));
-        cont.appendChild(cms);
-        let assets = this.buildLeftBarItems("", "fa-picture-o ", "Assets", (e) => this.slideIn(e));
-        cont.appendChild(assets);
-        let templates = this.buildLeftBarItems("", "fa-shopping-cart ", "Templates", (e) => this.slideIn(e));
-        cont.appendChild(templates);
-        let flow = this.buildLeftBarItems("", "fa-microchip ", "Logic", (e) => this.slideIn(e));
-        cont.appendChild(flow);
-        let settings = this.buildLeftBarItems("", "fa-cogs ", "Settings", (e) => this.slideIn(e));
-        cont.appendChild(settings);
-        let translate = this.buildLeftBarItems("left-menu-trans", "fa-hand-rock-o ", "Translate mode", this.setDragMode);
-        cont.appendChild(translate);
-        let absolute = this.buildLeftBarItems("left-menu-abs", "fa-arrows ", "Absolute mode", this.setDragMode);
-        cont.appendChild(absolute);
-        let cls = this.buildLeftBarItems("left-menu-cls", "fa-arrows-h ", "Collapse", () => this.closeLeftMenu());
-        cont.appendChild(cls);
+        cont.appendChild(this.buildLeftBarItems("", "fa-th-large ", "Blocks", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-bars ", "Layers", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-file ", "Pages", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-database ", "CMS", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-picture-o ", "Assets", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-shopping-cart ", "Templates", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-microchip ", "Logic", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("", "fa-cogs ", "Settings", (e) => this.slideIn(e)));
+        cont.appendChild(this.buildLeftBarItems("left-menu-trans", "fa-hand-rock-o ", "Translate mode", (e) => this.setDragMode(e)));
+        cont.appendChild(this.buildLeftBarItems("left-menu-abs", "fa-arrows ", "Absolute mode", (e) => this.setDragMode(e)));
+        cont.appendChild(this.buildLeftBarItems("left-menu-cls", "fa-arrows-h ", "Collapse", () => this.closeLeftMenu()));
         return cont;
     }
 
+    /**
+     * Left nav bar elements builder
+     * @param {String} id id attribute of the element
+     * @param {String} icon fontawesome icon class
+     * @param {String} title title attribute of the element
+     * @param {Function} click function for on click events
+     */
     buildLeftBarItems(id, icon, title, click) {
-        let item = document.createElement('span');
-        if (id !== "")
+        const item = document.createElement('span');
+        if (id !== "") {
             item.id = id;
-        item.className += "left-menu-icons gjs-pn-btn fa " + icon;
+            item.className += "gjs-pn-btn fa " + icon;
+        } else
+            item.className += "left-menu-icons gjs-pn-btn fa " + icon;
         item.title = title;
         item.addEventListener('click', click);
         return item;
     }
 
-    buildSimpleMenu(id, header) {
-        let cont = document.createElement('div');
+    /**
+     * Left menu panel builder
+     * @param {String} id id attribute of the element
+     * @param {String} header heading displayed on the panel
+     * @param {Boolean} search whether or not to include search bar
+     */
+    buildSimpleMenu(id, header, search = false) {
+        const cont = document.createElement('div');
         cont.id = id;
         cont.className += "left-menu-expanded";
-        let div = document.createElement('div');
-        let p = document.createElement('p');
-        let heading = document.createElement('span');
+        const div = document.createElement('div');
+        const p = document.createElement('p');
+        const heading = document.createElement('span');
         heading.className += "menu-header";
         heading.innerHTML = header;
-        let x = document.createElement('span');
+        const x = document.createElement('span');
         x.className += "close fa fa-times";
         x.addEventListener('click', () => this.slideOut(id));
         p.appendChild(heading);
         p.appendChild(x);
         div.appendChild(p);
+        if (search)
+            div.appendChild(this.buildSearch());
         cont.appendChild(div);
         return cont;
     }
 
-    buildTabMenu(id, header, tabs) {
-        let cont = this.buildSimpleMenu(id, header);
-        let tbs = this.buildTabs(tabs);
+    /**
+     * Left menu tabbed panel builder
+     * @param {String} id id attribute of the element
+     * @param {String} header heading displayed on the panel
+     * @param {Object} tabs object containing data to build tab eg.{id: "bootstrap",name: "blocks",labelText: "Bootstrap"}
+     * @param {Boolean} search whether or not to include search bar
+     */
+    buildTabMenu(id, header, tabs, search = false) {
+        const cont = this.buildSimpleMenu(id, header, search);
+        const tbs = this.buildTabs(tabs);
         cont.firstChild.appendChild(tbs);
         return cont;
     }
 
+    /**
+     * Build menu tabs
+     * @param {Object} tabs object containing data to build tab eg.{id: "bootstrap",name: "blocks",labelText: "Bootstrap"}
+     */
     buildTabs(tabs) {
-        let _cont = document.createElement('div');
-        let div = document.createElement('div');
-        let cont = document.createElement('div');
+        const _cont = document.createElement('div');
+        _cont.style.width = "100%";
+        _cont.style.float = "left";
+        const div = document.createElement('div');
+        const cont = document.createElement('div');
         cont.className += "gjs-fields";
-        let cont1 = document.createElement('div');
+        const cont1 = document.createElement('div');
         cont1.className += "gjs-field gjs-field-radio";
-        let cont2 = document.createElement('div');
+        const cont2 = document.createElement('div');
         cont2.className += "gjs-radio-items";
         for (let i = 0; i < tabs.length; i++) {
-            let tabItemC = document.createElement('div');
+            const tabItemC = document.createElement('div');
             tabItemC.className += "gjs-radio-item";
-            let tab = document.createElement('div');
+            const tab = document.createElement('div');
             tab.id = tabs[i].id + "-tab";
             tab.style.marginTop = "10px";
             div.appendChild(tab);
-            let input = document.createElement('input');
+            const input = document.createElement('input');
             input.type = "radio";
             input.id = tabs[i].id;
             input.value = tabs[i].id;
             input.name = tabs[i].name;
             input.className += "gjs-sm-radio";
-            let label = document.createElement('label');
+            const label = document.createElement('label');
             label.className += "gjs-radio-item-label";
             label.htmlFor = tabs[i].id;
             label.innerHTML = tabs[i].labelText;
@@ -181,6 +180,34 @@ class CustomMenu {
         _cont.appendChild(cont);
         _cont.appendChild(div);
         return _cont;
+    }
+
+    buildSearch() {
+        const cont = document.createElement('div');
+        cont.style.justifyContent = "center";
+        const icon = document.createElement('span');
+        icon.style.float = "left";
+        icon.style.margin = "5px 5px 5px 5px";
+        icon.innerHTML = '<i class="fa fa-search"></i>';
+        const span = document.createElement('span');
+        span.style.float = "left";
+        span.style.width = "88%"
+        const iField = document.createElement('div');
+        iField.className += "gjs-field";
+        iField.style.margin = "0px 5px 5px 0px";
+        const input = document.createElement('input');
+        input.placeholder = "Filter by name...";
+        input.name = "search";
+        input.addEventListener('change', e => {
+            console.log("Searching");
+        });
+
+        cont.appendChild(icon);
+        iField.appendChild(input);
+        span.appendChild(iField);
+        cont.appendChild(span);
+
+        return cont
     }
 
     setDragMode(evt) {
@@ -221,15 +248,15 @@ class CustomMenu {
     }
 
     deactivateAll() {
-        let menuBtns = document.getElementsByClassName('left-menu-icons');
+        const menuBtns = document.getElementsByClassName('left-menu-icons');
         for (var i = 0; i < menuBtns.length; i++) {
             menuBtns[i].className = menuBtns[i].className.replace("gjs-pn-active", "");
         }
     }
 
     slideIn(evt) {
-        let menu = evt.currentTarget.title.toLowerCase();
-        var _menu = document.getElementById(menu).style;
+        const menu = evt.currentTarget.title.toLowerCase();
+        const _menu = document.getElementById(menu).style;
         if (event != null) {
             if (evt.currentTarget.title != this.event) {
                 this.open(_menu);
@@ -245,16 +272,25 @@ class CustomMenu {
         }
     }
 
+    /**
+     * @param {Object} menu left menu element
+     */
     slideOut(menu) {
-        var _menu = document.getElementById(menu).style;
+        const _menu = document.getElementById(menu).style;
         this.close(_menu);
     }
 
+    /**
+     * @param {Object} _menu style of left menu element
+     */
     open(_menu) {
         this.closeAll();
         _menu.left = "40px";
     }
 
+    /**
+     * @param {Object} _menu style of left menu element
+     */
     close(_menu) {
         this.event = null;
         this.deactivateAll();
@@ -262,16 +298,16 @@ class CustomMenu {
     }
 
     closeAll() {
-        let menus = document.getElementsByClassName('left-menu-expanded');
-        for (var i = 0; i < menus.length; i++) {
+        const menus = document.getElementsByClassName('left-menu-expanded');
+        for (let i = 0; i < menus.length; i++) {
             let _menu = menus[i].style;
             this.close(_menu);
         }
     }
 
     listenOut(evt) {
-        let menu = evt.currentTarget.title.toLowerCase();
-        var _menu = document.getElementById(menu).style;
+        const menu = evt.currentTarget.title.toLowerCase();
+        const _menu = document.getElementById(menu).style;
         menu.onmouseout = this.slideOut(_menu);
     }
 
@@ -281,7 +317,6 @@ class CustomMenu {
 
     closeLeftMenu() {
         document.getElementById('left-menu').style.left = "-40px";
-        editor.getModel().set('dmode', 'default');
         this.closeAll();
     }
 }
