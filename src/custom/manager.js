@@ -107,17 +107,17 @@ class Manager {
     }
 
     buildPagesSection(name) {
-        let cont = document.createElement('div');
+        const cont = document.createElement('div');
         cont.className += "gjs-block-categories";
-        let iField = document.createElement('div');
+        const iField = document.createElement('div');
         iField.className += "gjs-field";
         iField.style.margin = "10px 5px 10px 5px";
-        let label = document.createElement('div');
+        const label = document.createElement('div');
         label.innerHTML = 'Add Page <i class="fa fa-plus-square"></i>';
         label.style.marginLeft = "8px";
         label.style.fontSize = "14px";
         //todo use modal to give options for new page creation
-        let input = document.createElement('input');
+        const input = document.createElement('input');
         input.placeholder = "Enter page name then enter";
 
         iField.appendChild(input);
@@ -125,11 +125,13 @@ class Manager {
         cont.appendChild(iField);
 
         //*const pages = project.pages;
-        let group = document.createElement('div');
-        let pjTitle = document.createElement('div');
-        let iconC = document.createElement('i');
+        const group = document.createElement('div');
+        const pjTitle = document.createElement('div');
+        const iconC = document.createElement('i');
+        const iconF = document.createElement('i');
         group.className += "gjs-block-category gjs-open";
         iconC.className += "gjs-caret-icon fa fa-caret-down";
+        iconF.className += "gjs-caret-icon fa fa-folder-open-o";
         pjTitle.className += "gjs-title";
         pjTitle.addEventListener('click', function (e) {
             if (e.currentTarget.parentNode.className == "gjs-block-category gjs-open") {
@@ -153,20 +155,21 @@ class Manager {
             }
         });
         pjTitle.appendChild(iconC);
+        pjTitle.appendChild(iconF);
         pjTitle.innerHTML += name; //? project.name; name no longer included 
         group.appendChild(pjTitle);
         if (this.project.length > 0) {
             for (let page in this.project) {
                 //const element = pages[j];
-                let pgTitle = document.createElement('div');
-                let iconP = document.createElement('i');
+                const pgTitle = document.createElement('div');
+                const iconP = document.createElement('i');
                 iconP.className += "page-icon fa fa-file-o";
                 pgTitle.dataset.index = this.project[page].uuid; //todo not index but uuid
                 if (page.uuid == this.currentIndex)
                     pgTitle.className += "page gjs-title page-open";
                 else
                     pgTitle.className += "page gjs-title ";
-                let iconX = document.createElement('i');
+                const iconX = document.createElement('i');
                 iconX.className += "close fa fa-trash";
                 iconX.title = "delete";
                 //todo rewrite the destroy function so that it sends delete request to the server
@@ -246,19 +249,28 @@ class Manager {
             },
         ];
         for (let prop in properties) {
-            let iField = document.createElement('div');
+            const iField = document.createElement('div');
             iField.className += "gjs-field";
             iField.style.margin = "5px 5px 10px 5px";
-            let label = document.createElement('div');
+            const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
             label.style.marginLeft = "8px";
             label.style.fontSize = "14px";
-            let input = document.createElement('input');
+            const input = properties[prop].name == 'metaDesc' ? document.createElement('textarea') : document.createElement('input');
             input.placeholder = properties[prop].placeholder;
             input.name = properties[prop].name;
             input.value = this.properties[properties[prop].name];
             input.addEventListener('change', e => {
-                this.properties[e.target.name] = e.target.value;
+                let regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
+                let regUrl = new RegExp(regexQuery, "i");
+                if (e.target.value !== "") {
+                    if (e.target.value.match(regUrl) !== null)
+                        this.properties[e.target.name] = e.target.value;
+                    else {
+                        console.warn("Invalid url");
+                        e.target.value = "";
+                    }
+                }
             });
 
             iField.appendChild(input);
