@@ -124,8 +124,8 @@ class Manager {
         //todo use modal to give options for new page creation
         const input = document.createElement('input');
         input.placeholder = "Enter page name then enter";
-        let modal = editor.Modal;
-        let mdlClass = 'gjs-mdl-dialog-sm';
+        const modal = editor.Modal;
+        const mdlClass = 'gjs-mdl-dialog-sm';
         input.addEventListener('change', (e) => {
             var mdlDialog = document.querySelector('.gjs-mdl-dialog');
             mdlDialog.className += ' ' + mdlClass;
@@ -259,7 +259,7 @@ class Manager {
 
     buildPropertiesSection() {
         //todo replace projects section with this section
-        let cont = document.createElement('div');
+        const cont = document.createElement('div');
         const properties = [{
                 name: 'name',
                 label: 'Name <i class="fa fa-info-circle"></i>',
@@ -327,7 +327,7 @@ class Manager {
             cont.appendChild(label);
             cont.appendChild(iField);
         }
-        let b = document.createElement('button');
+        const b = document.createElement('button');
         b.id = "save-properties";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Properties';
         b.style.margin = "10px 5px 10px 5px";

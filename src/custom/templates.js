@@ -1,5 +1,3 @@
-import Manager from './manager';
-
 class Templates {
     constructor(templates) {
         this.buildTemplatesPanel(templates);
@@ -12,6 +10,7 @@ class Templates {
     buildTemplatesPanel(templates) {
         let templatesMenu = this.buildTemplates(templates);
         document.querySelector('#templates').appendChild(templatesMenu);
+        //editor.on('component:selected', () => this.openAddModal());
     }
 
     buildTemplates(templates) {

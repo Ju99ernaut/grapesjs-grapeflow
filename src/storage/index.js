@@ -149,7 +149,30 @@ export default (editor, config) => {
         },
 
         /**
-         * Load the data
+         * Load the Block contents
+         * @param {Function} clb Callback function to call when load is ended
+         * @param {Function} clbErr Callback function to call in case of errors
+         */
+        loadBlock(clb, clbErr) {
+            rs.request(config.urlLoadBlocks, {
+                method: 'get'
+            }, clb, clbErr);
+        },
+
+        /**
+         * Store the Block contents
+         * @param {Object} data Data object to store
+         * @param {Function} clb Callback function to call when load is ended
+         * @param {Function} clbErr Callback function to call in case of errors
+         */
+        storeBlock(data, clb, clbErr) {
+            rs.request(config.urlStoreBlocks, {
+                body: data
+            }, clb, clbErr);
+        },
+
+        /**
+         * Load the data from local
          * @param {Array} keys Array containing values to load, eg,['gjs-components', 'gjs-style', ...]
          * @param {Function} clb Callback function to call when load is ended
          * @param {Function} clbErr Callback function to call in case of errors
@@ -169,7 +192,7 @@ export default (editor, config) => {
         },
 
         /**
-         * Store the data
+         * Store the data to local
          * @param {Object} data Data object to store
          * @param {Function} clb Callback function to call when load is ended
          * @param {Function} clbErr Callback function to call in case of errors

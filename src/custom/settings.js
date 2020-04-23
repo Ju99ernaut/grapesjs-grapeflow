@@ -58,7 +58,7 @@ class Settings {
             },
             {
                 name: 'customDomain',
-                label: 'Custom Domain <i class="fa fa-info-circle"></i>',
+                label: 'Custom Domain <i class="fa fa-question-circle"></i>',
                 placeholder: 'eg. True',
                 radio: true
             },
@@ -137,7 +137,7 @@ class Settings {
             cont.appendChild(iField);
         }
         let b = document.createElement('button');
-        b.id = "save-properties";
+        b.id = "save-settings";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Settings';
         b.style.margin = "10px 5px 10px 5px";
         b.className += "gjs-btn-prim";

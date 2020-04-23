@@ -18,8 +18,8 @@ export default (editor, config) => {
   const txtConfirm = config.textCleanCanvas;
   let interactions = null;
   let codeEditor = null;
-  let modal = editor.Modal;
-  let mdlClass = 'gjs-mdl-dialog-sm';
+  const modal = editor.Modal;
+  const mdlClass = 'gjs-mdl-dialog-sm';
 
   cm.add(cmdImport, openImport(editor, config));
   cm.add(cmdDeviceDesktop, {
