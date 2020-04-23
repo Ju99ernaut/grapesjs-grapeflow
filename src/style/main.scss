@@ -129,7 +129,7 @@ html {
   position: absolute;
   left: -40px;
   top: 40px;
-  background-color: #3a3444;
+  background-color: $primaryColor;
   width: 40px;
   height: 94%;
   transition: all 0.5s ease;
@@ -164,7 +164,7 @@ html {
   top: 40px;
   width: 200px;
   height: 94%;
-  color: #9f99bd;
+  color: $secondaryColor;
   background-color: #403444f3;
   box-shadow: 0 2px 3px 1px #161616, 0 6px 0px 0px #403444f3;
   -webkit-box-shadow: 0 2px 3px 1px #161616, 0 6px 0px 0px #403444f3;
@@ -200,18 +200,20 @@ html {
   margin: 0;
   width: 40px;
   padding: 10px;
-  color: #9f99bd;
+  color: $secondaryColor;
 }
 
 .left-menu-icons:hover {
-  color: #a67ad9;
+  color: $quaternaryColor;
 }
 
 .left.gjs-am-preview-cont {
+  cursor: move;
   width: 70%;
 }
 
 .left.gjs-am-meta {
+  cursor: pointer;
   width: 30%;
 }
 
@@ -223,11 +225,11 @@ html {
   position: absolute;
   bottom: 5px;
   left: 0px;
-  color: #9f99bd;
+  color: $secondaryColor;
 }
 
 #left-menu-abs:hover {
-  color: #a67ad9;
+  color: $quaternaryColor;
 }
 
 #left-menu-trans {
@@ -238,11 +240,11 @@ html {
   position: absolute;
   bottom: 5px;
   left: 0px;
-  color: #9f99bd;
+  color: $secondaryColor;
 }
 
 #left-menu-trans:hover {
-  color: #a67ad9;
+  color: $quaternaryColor;
 }
 
 #left-menu-cls {
@@ -256,17 +258,17 @@ html {
   position: absolute;
   bottom: 0px;
   left: 0px;
-  color: #9f99bd;
+  color: $secondaryColor;
   background-color: #362c3a;
 }
 
 #left-menu-cls:hover {
-  color: #a67ad9;
+  color: $quaternaryColor;
 }
 
 .menu-header {
   padding-left: 5px;
-  color: #9f99bd;
+  color: $secondaryColor;
   font-size: 16px;
   font-weight: bold;
 }
@@ -277,7 +279,7 @@ html {
   border-bottom: 1px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: #9f99bd;
+  color: $secondaryColor;
 }
 
 .gjs-title.page:hover {
@@ -286,12 +288,12 @@ html {
   border-bottom: 1px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: #a67ad9;
+  color: $quaternaryColor;
 }
 
 .gjs-title.project:hover {
   background-color: #5c505f56;
-  color: #a67ad9;
+  color: $quaternaryColor;
 }
 
 .gjs-title.page.page-open {
@@ -300,7 +302,7 @@ html {
   border-bottom: 2px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  color: #d8a0e5;
+  color: #c57bd6;
 }
 
 .page-icon {
@@ -309,7 +311,7 @@ html {
 }
 
 .close {
-  color: #9f99bd;
+  color: $secondaryColor;
   font-size: 15px;
   float: right;
 }
@@ -653,6 +655,18 @@ html {
 .gjs-pn-views-container,
 .gjs-cv-canvas {
   transition: width 0.3s ease-in-out;
+}
+
+.gjs-image-block {
+  padding: 0px 0px 2px 0px;
+  cursor: pointer;
+}
+
+.gjs-image-block img {
+  width: 100%;
+  height: 85%;
+  object-fit: contain;
+  cursor: move;
 }
 
 /*Style Manager Stuff

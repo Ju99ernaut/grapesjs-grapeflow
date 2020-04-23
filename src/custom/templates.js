@@ -19,14 +19,12 @@ class Templates {
         cont.className += "gjs-blocks-c";
         for (let i = 0; i < templates.length; i++) {
             let template = document.createElement('div');
-            template.className += "fa fa-picture-o gjs-block gjs-one-bg gjs-four-color-h";
+            template.className += "fa fa-cube gjs-block gjs-one-bg gjs-four-color-h"; //todo either background image or popper showing image preview
             template.title = templates[i].name;
             template.style.cursor = "pointer";
             template.innerHTML = '<div class="gjs-block-label">' + templates[i].name + '</div>';
             template.addEventListener('click', function () {
-                let yes = confirm("This will overwrite the current canvas!...Continue?");
-                if (yes)
-                    Manager.switchPage(templates[i]);
+                //todo use drag event to handle block being dragged onto canvas
             });
             cont.appendChild(template);
         }

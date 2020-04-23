@@ -4,17 +4,17 @@ const $ = document.getElementById.bind(document)
 
 class CodeEditor {
     constructor(editor) {
-        this.editor = editor
-        this.isShowing = true
-        this.buildCodePanel()
+        this.editor = editor;
+        this.isShowing = true;
+        this.buildCodePanel();
     }
 
     findPanel() {
-        const pn = this.editor.Panels
-        const id = 'views-container'
+        const pn = this.editor.Panels;
+        const id = 'views-container';
         return pn.getPanel(id) || pn.addPanel({
             id
-        })
+        });
     }
 
     /**
@@ -22,7 +22,7 @@ class CodeEditor {
      * @param {String} type Code editor type ,html or css
      */
     buildCodeEditor(type) {
-        let codeEditor = this.editor.CodeManager.getViewer('CodeMirror').clone()
+        let codeEditor = this.editor.CodeManager.getViewer('CodeMirror').clone();
         codeEditor.set({
             codeName: type === 'html' ? 'htmlmixed' : 'css',
             readOnly: false,
@@ -32,8 +32,8 @@ class CodeEditor {
             autoCloseBrackets: true,
             styleActiveLine: true,
             smartIndent: true
-        })
-        return codeEditor
+        });
+        return codeEditor;
     }
 
     /**
@@ -43,36 +43,36 @@ class CodeEditor {
      * @param {Object} textArea Text area DOM element 
      */
     buildSection(type, editor, textArea) {
-        const section = document.createElement('section')
+        const section = document.createElement('section');
         section.innerHTML = `<div class="codepanel-separator">
         <div class="codepanel-label">${type}</div>
         <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save</button>
-        </div>`
-        section.appendChild(textArea)
-        this.codePanel.appendChild(section)
-        return section
+        </div>`;
+        section.appendChild(textArea);
+        this.codePanel.appendChild(section);
+        return section;
     }
 
     buildCodePanel() {
-        const panel = this.findPanel()
-        this.codePanel = document.createElement('div')
-        this.codePanel.classList.add('code-panel')
+        const panel = this.findPanel();
+        this.codePanel = document.createElement('div');
+        this.codePanel.classList.add('code-panel');
 
-        this.htmlCodeEditor = this.buildCodeEditor('html')
-        this.cssCodeEditor = this.buildCodeEditor('css')
-        const htmlTextArea = document.createElement('textarea')
-        const cssTextArea = document.createElement('textarea')
+        this.htmlCodeEditor = this.buildCodeEditor('html');
+        this.cssCodeEditor = this.buildCodeEditor('css');
+        const htmlTextArea = document.createElement('textarea');
+        const cssTextArea = document.createElement('textarea');
         const sections = [
             this.buildSection('html', this.htmlCodeEditor, htmlTextArea),
             this.buildSection('css', this.cssCodeEditor, cssTextArea)
-        ]
-        panel.set('appendContent', this.codePanel).trigger('change:appendContent')
-        this.htmlCodeEditor.init(htmlTextArea)
-        this.cssCodeEditor.init(cssTextArea)
-        this.updateEditorContents()
+        ];
+        panel.set('appendContent', this.codePanel).trigger('change:appendContent');
+        this.htmlCodeEditor.init(htmlTextArea);
+        this.cssCodeEditor.init(cssTextArea);
+        this.updateEditorContents();
 
-        $('cp-save-html').addEventListener('click', this.updateHtml.bind(this))
-        $('cp-save-css').addEventListener('click', this.updateCss.bind(this))
+        $('cp-save-html').addEventListener('click', this.updateHtml.bind(this));
+        $('cp-save-css').addEventListener('click', this.updateCss.bind(this));
 
         Split(sections, {
             direction: 'vertical',
@@ -80,66 +80,88 @@ class CodeEditor {
             minSize: 100,
             gutterSize: 2,
             onDragEnd: this.refreshEditors.bind(this)
-        })
+        });
 
         this.editor.on('component:add', model => {
             this.updateEditorContents()
-        })
+        });
         this.editor.on('component:remove', model => {
             this.updateEditorContents()
-        })
+        });
         this.editor.on('component:update', model => {
             this.updateEditorContents()
-        })
+        });
 
-        return this.codePanel
+        return this.codePanel;
     }
 
     showCodePanel() {
-        this.isShowing = true
-        this.updateEditorContents()
-        this.codePanel.style.display = 'block'
+        this.isShowing = true;
+        this.updateEditorContents();
+        this.codePanel.style.display = 'block';
         // make sure editor is aware of width change after the 300ms effect ends
-        setTimeout(this.refreshEditors.bind(this), 320)
-        this.editor.$('.gjs-pn-views-container').get(0).style.width = '35%'
-        this.editor.$('.gjs-cv-canvas').get(0).style.width = '65%'
+        setTimeout(this.refreshEditors.bind(this), 320);
+        this.editor.$('.gjs-pn-views-container').get(0).style.width = '35%';
+        this.editor.$('.gjs-cv-canvas').get(0).style.width = '65%';
     }
 
     hideCodePanel() {
-        if (this.codePanel) this.codePanel.style.display = 'none'
-        this.editor.$('.gjs-pn-views-container').get(0).style.width = '15%'
-        this.editor.$('.gjs-cv-canvas').get(0).style.width = '85%'
-        this.isShowing = false
+        if (this.codePanel) this.codePanel.style.display = 'none';
+        this.editor.$('.gjs-pn-views-container').get(0).style.width = '15%';
+        this.editor.$('.gjs-cv-canvas').get(0).style.width = '85%';
+        this.isShowing = false;
     }
 
     refreshEditors() {
-        this.htmlCodeEditor.editor.refresh()
-        this.cssCodeEditor.editor.refresh()
+        this.htmlCodeEditor.editor.refresh();
+        this.cssCodeEditor.editor.refresh();
     }
 
     updateHtml() {
-        const htmlCode = this.htmlCodeEditor.editor.getValue()
-        if (!htmlCode || htmlCode === this.previousHtmlCode) return
-        this.previousHtmlCode = htmlCode
-        this.editor.setComponents(htmlCode)
-        console.log("Changes applied")
+        const htmlCode = this.htmlCodeEditor.editor.getValue();
+        if (!htmlCode || htmlCode === this.previousHtmlCode) return;
+        this.previousHtmlCode = htmlCode;
+        this.editor.setComponents(htmlCode);
+        const component = this.editor.getSelected();
+        const coll = component.collection;
+        const at = coll.indexOf(component);
+        coll.remove(component);
+        coll.add(htmlCode, {
+            at
+        });
+        //?this.editor.getSelected().components(htmlCode); method duplicates components
+        console.log("Component html updated");
     }
 
     updateCss() {
-        const cssCode = this.cssCodeEditor.editor.getValue()
-        if (!cssCode || cssCode === this.previousCssCode) return
-        this.previousCssCode = cssCode
-        this.editor.setStyle(cssCode)
-        console.log("Changes applied")
+        const cssCode = this.cssCodeEditor.editor.getValue();
+        if (!cssCode || cssCode === this.previousCssCode) return;
+        this.previousCssCode = cssCode;
+        //this.editor.setStyle(cssCode)
+        const cc = this.editor.CssComposer;
+        const selectorRules = cssCode.split(/(?<=}\n)/g);
+        for (let pair in selectorRules) {
+            let rulePair = selectorRules[pair].split(/(?={)/g);
+            //? selector eg. #id, rule eg. {color: 'red'}
+            cc.setRule(rulePair[0], rulePair[1].replace("{", ""));
+        }
+        console.log("Component css rules updated");
     }
 
     updateEditorContents() {
-        if (!this.isShowing) return
-        this.htmlCodeEditor.setContent(this.editor.getHtml())
-        this.cssCodeEditor.setContent(this.editor.getCss({
-            avoidProtected: true
-        }))
+        if (!this.isShowing) return;
+        const component = this.editor.getSelected();
+        if (component !== undefined) {
+            this.htmlCodeEditor.setContent(component.toHTML());
+            this.cssCodeEditor.setContent(this.editor.CodeManager.getCode(component, 'css', {
+                cssc: this.editor.CssComposer
+            }));
+        }
+        //this.htmlCodeEditor.setContent(this.editor.getHtml())
+        //this.cssCodeEditor.setContent(this.editor.getCss({
+        //  avoidProtected: true
+        //}))
     }
 }
 
-export default CodeEditor
+export default CodeEditor;

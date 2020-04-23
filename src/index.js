@@ -54,8 +54,22 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
 
     // Default content to setup on import model open.
     // Could also be a function with a dynamic content return (must be a string)
-    // eg. modalImportContent: editor => editor.getHtml(),
-    modalImportContent: editor => editor.getHtml() + '<style>' + editor.getCss() + '</style>',
+    // eg. modalImportContent:editor => editor.getHtml() + '<style>' + editor.getCss() + '</style>,
+    modalImportContent: `
+    <style>
+      .class1 {
+        color: grey;
+        margin: 5px 5px 5px 5px
+        padding: 5px 5px 5px 5px;
+      }
+    </style>
+    <h1>
+      Warning
+    </h1>
+    <div class="class1">
+      This operation will overwrite the canvas. If you want to insert code use the custom code component.
+    </div>
+    `,
 
     // Code viewer (eg. CodeMirror) options
     importViewerOptions: {},
@@ -103,7 +117,7 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     textManager: 'Pages',
 
     // Text for Settings menu
-    textSettings: 'Editor Settings',
+    textSettings: 'Project Settings',
 
     // Text for Templates menu
     textTemplates: 'Templates',

@@ -45,13 +45,14 @@ class CustomMenu {
         cMenu.appendChild(this.buildTabMenu("assets", "Assets", [localTab, libraryTab], true));
         cMenu.appendChild(this.buildTabMenu("templates", "Templates", [customBlocksTab, marketBlocksTab], true));
         cMenu.appendChild(this.buildSimpleMenu("logic", "Logic", true));
-        cMenu.appendChild(this.buildSimpleMenu("settings", "Editor Settings", true));
+        cMenu.appendChild(this.buildSimpleMenu("settings", "Project Settings", true));
         cMenu.appendChild(this.buildLeftBar());
         cMenu.appendChild(this.buildHoverTarget());
         document.body.appendChild(cMenu);
         this.buildMenuModules();
-        document.getElementById('gjs').addEventListener("click", () => this.closeLeftMenu());
-        editor.on('block:drag:start', () => this.closeLeftMenu())
+        //?document.getElementById('gjs').addEventListener("click", () => this.closeLeftMenu());
+        editor.on('block:drag:start', () => this.closeLeftMenu());
+        editor.on('run:preview', () => this.closeLeftMenu());
     }
 
     buildHoverTarget() {

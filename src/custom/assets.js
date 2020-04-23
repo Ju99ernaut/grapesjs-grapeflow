@@ -55,9 +55,11 @@ class Assets {
         const local = document.getElementById(localTab.id);
         local.checked = true;
         local.addEventListener('click', () => this.assetTabs());
+        const remoteTab = document.getElementById(libraryTab.id + '-tab');
+        remoteTab.innerHTML = this.buildLibrary(); //?Template
         document.getElementById(libraryTab.id).addEventListener('click', () => this.assetTabs());
-        document.getElementById(libraryTab.id + '-tab').style.display = "none";
-        editor.on('asset:upload:response', res => {
+        remoteTab.style.display = "none";
+        editor.on('asset:upload:response', res => { //todo may need optimization
             const url = this.base + res.file;
             const as = editor.AssetManager;
             as.add(url);
@@ -149,6 +151,25 @@ class Assets {
             cont.appendChild(this.buildAsset(url, name, dim));
         }
         return cont;
+    }
+
+    buildLibrary() {
+        return `
+        <div class="gjs-blocks-c">
+        <div class="gjs-block gjs-one-bg gjs-four-color-h gjs-image-block">
+        <img alt="background3.jpg" src="http://127.0.0.1:8000/media/background3.jpg" >
+        <div class="gjs-block-label">by person1</div>
+        </div>
+        <div class="gjs-block gjs-one-bg gjs-four-color-h gjs-image-block">
+        <img alt="background2.jpg" src="http://127.0.0.1:8000/media/background2.jpg">
+        <div class="gjs-block-label">by person2</div>
+        </div>
+        <div class="gjs-block gjs-one-bg gjs-four-color-h gjs-image-block">
+        <img alt="background1.jpg" src="http://127.0.0.1:8000/media/background1.jpg">
+        <div class="gjs-block-label">by person3</div>
+        </div>
+        </div>
+        `
     }
 }
 

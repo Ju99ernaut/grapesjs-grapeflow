@@ -15,7 +15,7 @@ class Manager {
         this.urlLoad = editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages;
         this.urlStore = editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages;
         const fs = editor.StorageManager.get('flow-storage');
-        this.name = 'Placeholder'
+        this.name = "Placeholder"
         this.project = null;
         this.currentIndex = '';
         this.currentProject = '';
@@ -25,9 +25,11 @@ class Manager {
             favicon: '',
             webclip: '',
             metaTitle: '',
-            metaDesc: ''
+            metaDesc: '',
+            slug: '',
         };
         fs.viewProject(res => {
+            //todo init settings
             this.name = res.name;
             fs.loadProject(result => {
                 this.project = result;
@@ -38,6 +40,9 @@ class Manager {
                 this.properties.webclip = this.project[0].webclip;
                 this.properties.metaTitle = this.project[0].metaTitle;
                 this.properties.metaDesc = this.project[0].metaDesc;
+                this.properties.slug = this.project[0].slug;
+                editor.setComponents(JSON.parse(this.project[0].components.replace(/^"|"$/g, "")));
+                editor.setStyle(JSON.parse(this.project[0].styles.replace(/^"|"$/g, "")));
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + this.currentIndex;
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + this.currentIndex + "/";
                 this.buildMangerPanel(this.name, projects); //todo Get project name
@@ -119,6 +124,43 @@ class Manager {
         //todo use modal to give options for new page creation
         const input = document.createElement('input');
         input.placeholder = "Enter page name then enter";
+        let modal = editor.Modal;
+        let mdlClass = 'gjs-mdl-dialog-sm';
+        input.addEventListener('change', (e) => {
+            var mdlDialog = document.querySelector('.gjs-mdl-dialog');
+            mdlDialog.className += ' ' + mdlClass;
+            infoContainer.style.display = 'block';
+            modal.setTitle('<div>Create Page</div>');
+            modal.setContent(`
+            <div style="font-size:14px">Select page template to create...</div>
+            <div class="gjs-blocks-c">
+            <div class="fa fa-square-o gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">blank</div>
+            </div>
+            <div class="fa fa-home gjs-block gjs-one-bg gjs-four-color-h" title="landing1" style="cursor: pointer;">
+            <div class="gjs-block-label">home</div>
+            </div>
+            <div class="fa fa-info-circle gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">about</div>
+            </div>
+            <div class="fa fa-credit-card gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">pricing</div>
+            </div>
+            <div class="fa fa-th gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">blog</div>
+            </div>
+            <div class="fa fa-shopping-bag gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">products</div>
+            </div>
+            </div>
+            `);
+            document.getElementById('info-panel').style.display = "none";
+            modal.open();
+            modal.getModel().once('change:open', function () {
+                mdlDialog.className = mdlDialog.className.replace(mdlClass, '');
+                document.getElementById('info-panel').style.display = "none";
+            });
+        });
 
         iField.appendChild(input);
         cont.appendChild(label);
@@ -170,7 +212,7 @@ class Manager {
                 else
                     pgTitle.className += "page gjs-title ";
                 const iconX = document.createElement('i');
-                iconX.className += "close fa fa-trash";
+                iconX.className += "close fa fa-trash-o";
                 iconX.title = "delete";
                 //todo rewrite the destroy function so that it sends delete request to the server
                 iconX.addEventListener('click', e => {
@@ -178,6 +220,7 @@ class Manager {
                     //*let p = e.currentTarget.parentNode
                     //?p.style.display = "none";
                     //!this.deletePage();
+                    console.warn("Delete here");
                 })
                 //console.log(i, j);
                 //todo rewrite save function so that it sends a save request to the server
@@ -247,6 +290,11 @@ class Manager {
                 label: 'Meta Description <i class="fa fa-info-circle"></i>',
                 placeholder: 'eg. description'
             },
+            {
+                name: 'slug',
+                label: 'Slug <i class="fa fa-info-circle"></i>',
+                placeholder: 'eg. slug'
+            },
         ];
         for (let prop in properties) {
             const iField = document.createElement('div');
@@ -266,6 +314,8 @@ class Manager {
                 if (e.target.value !== "") {
                     if (e.target.value.match(regUrl) !== null)
                         this.properties[e.target.name] = e.target.value;
+                    else if (e.target.name != "thumbnail" && e.target.name != "favicon" && e.target.name != "webclip")
+                        this.properties[e.target.name] = e.target.value;
                     else {
                         console.warn("Invalid url");
                         e.target.value = "";
@@ -282,18 +332,15 @@ class Manager {
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Properties';
         b.style.margin = "10px 5px 10px 5px";
         b.className += "gjs-btn-prim";
-        b.addEventListener('click', (e) => {
+        b.addEventListener('click', (e) => { //todo ensure request is called if there are changes
             const clb = (res) => {
                 console.log("Properties updated...")
             }
             const clbErr = (err) => {
                 console.error(err);
             }
-            const rs = editor.StorageManager.get('remote');
-            const url = this.urlStore + this.currentIndex + "/";
-            rs.request(url, {
-                body: this.properties,
-            }, clb, clbErr);
+            const fs = editor.StorageManager.get('flow-storage');
+            fs.storeProperties(this.properties, clb, clbErr);
         });
         cont.appendChild(b)
         return cont
@@ -306,8 +353,8 @@ class Manager {
 
     loadPage() {
         return editor.load(res => {
-            editor.setComponents(res.components);
-            editor.setStyle(res.style);
+            editor.setComponents(JSON.parse(res.components.replace(/^"|"$/g, "")));
+            editor.setStyle(JSON.parse(res.styles.replace(/^"|"$/g, "")));
             this.properties.name = res.name;
             this.properties.thumbnail = res.thumbnail;
             this.properties.favicon = res.favicon;

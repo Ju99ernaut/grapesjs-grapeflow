@@ -65,6 +65,18 @@ export default (editor, config) => {
         },
 
         /**
+         * Store page properties
+         * @param {Object} data Data object to store
+         * @param {Function} clb Callback function to call when load is ended
+         * @param {Function} clbErr Callback function to call in case of errors
+         */
+        storeProperties(data, clb, clbErr) {
+            rs.request(config.urlStorePages, {
+                body: data
+            }, clb, clbErr);
+        },
+
+        /**
          * Create the data
          * @param {Object} data Data object to store
          * @param {Function} clb Callback function to call when load is ended
@@ -99,6 +111,18 @@ export default (editor, config) => {
         load(clb, clbErr) {
             rs.request(config.urlLoadPages, {
                 method: 'get'
+            }, clb, clbErr);
+        },
+
+        /**
+         * Store the Project details
+         * @param {Object} data Data object to store
+         * @param {Function} clb Callback function to call when load is ended
+         * @param {Function} clbErr Callback function to call in case of errors
+         */
+        storeProject(data, clb, clbErr) {
+            rs.request(config.urlStoreProjects, {
+                body: data
             }, clb, clbErr);
         },
 
