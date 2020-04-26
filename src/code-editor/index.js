@@ -1,4 +1,5 @@
 import Split from 'split.js';
+import html2canvas from '@trainiac/html2canvas';
 
 const $ = document.getElementById.bind(document);
 
@@ -138,7 +139,7 @@ class CodeEditor {
         const htmlCode = this.htmlCodeEditor.editor.getValue();
         if (!htmlCode || htmlCode === this.previousHtmlCode) return;
         this.previousHtmlCode = htmlCode;
-        this.editor.setComponents(htmlCode);
+        //this.editor.setComponents(htmlCode);
         const component = this.editor.getSelected();
         const coll = component.collection;
         const at = coll.indexOf(component);
@@ -160,7 +161,8 @@ class CodeEditor {
         for (let pair in selectorRules) {
             let rulePair = selectorRules[pair].split(/(?={)/g);
             //? selector eg. #id, rule eg. {color: 'red'}
-            cc.setRule(rulePair[0], rulePair[1].replace("{", ""));
+            if(!/^@/.test(rulePair[0]))
+                cc.setRule(rulePair[0], rulePair[1].replace("{", ""));
         }
         console.log("Component css rules updated");
     }
@@ -188,6 +190,8 @@ class CodeEditor {
         infoContainer.style.display = 'block';
         modal.setTitle('<div>Save Template</div>');
         modal.setContent(this.buildAddModal());
+        this.properties.html = this.htmlCodeEditor.editor.getValue();
+        this.properties.css = this.cssCodeEditor.editor.getValue();
         document.getElementById('info-panel').style.display = "none";
         modal.open();
         modal.getModel().once('change:open', function () {
@@ -245,16 +249,23 @@ class CodeEditor {
             left.appendChild(label);
             left.appendChild(iField);
         }
-        const iField = document.createElement('div');
+        let iField = document.createElement('div');
+        iField.id = "preview";
         iField.className += "gjs-field";
         iField.style.margin = "5px 5px 10px 5px";
-        const label = document.createElement('div');
+        iField.style.height = "450px";
+        iField.style.overflowY = "scroll";
+        let label = document.createElement('div');
         label.innerHTML = 'Preview <i class="fa fa-camera"></i>';
         label.style.marginLeft = "8px";
         label.style.fontSize = "16px";
-        const pr = document.createElement('textarea');
-        pr.style.minHeight = "446px";
-        iField.appendChild(pr);
+        //const pr = document.createElement('div');
+        //pr.style.minHeight = "446px";
+        //let doc = new DOMParser().parseFromString(this.htmlCodeEditor.editor.getValue(), "text/xml")
+        //html2canvas(doc).then(canvas => document.body.appendChild(canvas));
+        //iField.appendChild(pr);
+        iField.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
+            this.cssCodeEditor.editor.getValue() + '</style>';
         right.appendChild(label);
         right.appendChild(iField);
         const b = document.createElement('button');
@@ -271,7 +282,8 @@ class CodeEditor {
                 console.error(err);
             }
             const fs = editor.StorageManager.get('flow-storage');
-            fs.storeBlock(this.properties, clb, clbErr);
+            //fs.storeBlock(this.properties, clb, clbErr);
+            html2canvas(document.getElementById('preview').firstChild).then(canvas => document.body.appendChild(canvas));
         });
         cont.appendChild(left);
         cont.appendChild(right);

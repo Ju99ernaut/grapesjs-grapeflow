@@ -27,7 +27,7 @@ class CustomMenu {
     buildMenuModules() {
         let managerModule = new Manager([]);
         let assetsModule = new Assets();
-        let templatesModule = new Templates([]);
+        let templatesModule = new Templates();
         let cmsModule = new CMS();
         let settingsModule = new Settings();
     }

@@ -28,6 +28,10 @@ class Manager {
             metaDesc: '',
             slug: '',
         };
+        const clbErr = err => {
+            console.error("Error while loading project...");
+            //console.error(err);
+        }
         fs.viewProject(res => {
             //todo init settings
             this.name = res.name;
@@ -45,10 +49,146 @@ class Manager {
                 editor.setStyle(JSON.parse(this.project[0].styles.replace(/^"|"$/g, "")));
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + this.currentIndex;
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + this.currentIndex + "/";
+                this.migrate();
                 this.buildMangerPanel(this.name, projects); //todo Get project name
                 console.log("Project loaded");
             });
-        })
+        }, clbErr);
+    }
+
+    migrate() {
+        this.layerIconMap();
+        //const blocksC = document.getElementById('blocks-c');
+        const layersC = document.getElementById('layers-c');
+        //blocksC.style.display = "block";
+        layersC.style.display = "block";
+        //const blocksM = document.getElementById('basic-tab');
+        const layersM = document.getElementById('layers');
+        //blocksM.appendChild(blocksC);
+        this.blockCategories();
+        layersM.appendChild(layersC);
+        const basic = document.getElementById('basic');
+        basic.checked = true;
+        basic.addEventListener('click', () => this.blockTabs());
+        document.getElementById('bootstrap-tab').style.display = "none";
+        document.getElementById('extra-tab').style.display = "none";
+        const bootstrap = document.getElementById('bootstrap');
+        bootstrap.addEventListener('click', () => this.blockTabs());
+        const extra = document.getElementById('extra');
+        extra.addEventListener('click', () => this.blockTabs());
+    }
+
+    blockCategories() {
+        const blockCategories = document.getElementsByClassName('gjs-block-category');
+        const basicTab = document.getElementById('basic-tab');
+        const bs4Tab = document.getElementById('bootstrap-tab');
+        const blockArray = Array.from(blockCategories);
+        blockArray.forEach(category => {
+            if (category.innerText !== undefined) {
+                if (/(Basic|Extra|Form)/.test(category.innerText))
+                    basicTab.appendChild(category);
+                else
+                    bs4Tab.appendChild(category);
+            }
+        });
+    }
+
+    blockTabs() {
+        if (document.getElementById('basic').checked) {
+            document.getElementById('basic-tab').style.display = "block";
+            document.getElementById('bootstrap-tab').style.display = "none";
+            document.getElementById('extra-tab').style.display = "none";
+        } else if (document.getElementById('bootstrap').checked) {
+            document.getElementById('basic-tab').style.display = "none";
+            document.getElementById('bootstrap-tab').style.display = "block";
+            document.getElementById('extra-tab').style.display = "none";
+        } else {
+            document.getElementById('basic-tab').style.display = "none";
+            document.getElementById('bootstrap-tab').style.display = "none";
+            document.getElementById('extra-tab').style.display = "block";
+        }
+    }
+
+    layerIconMap() {
+        const layerNames = document.getElementsByClassName('gjs-layer-name');
+        for (let layer in layerNames) {
+            let regexQuery = /^<i/;
+            if (regexQuery.exec(layerNames[layer].innerHTML) == null && layerNames[layer].innerHTML != undefined) {
+                switch (layerNames[layer].innerHTML) {
+                    case 'Body':
+                        layerNames[layer].innerHTML = '<i class="fa fa-cubes"></i> Body';
+                        break;
+                    case 'Text':
+                        layerNames[layer].innerHTML = '<i class="fa fa-i-cursor"></i> Text';
+                        break;
+                    case 'Header':
+                        layerNames[layer].innerHTML = '<i class="fa fa-header"></i> Header';
+                        break;
+                    case 'Box':
+                        layerNames[layer].innerHTML = '<i class="fa fa-square-o"></i> Box';
+                        break;
+                    case 'Section':
+                        layerNames[layer].innerHTML = '<i class="fa fa-object-group"></i> Section';
+                        break;
+                    case 'Link':
+                        layerNames[layer].innerHTML = '<i class="fa fa-link"></i> Link';
+                        break;
+                    case 'Footer':
+                        layerNames[layer].innerHTML = '<i class="fa fa-long-arrow-down"></i> Footer'; //!icon
+                        break;
+                    case 'Input':
+                        layerNames[layer].innerHTML = '<i class="fa fa-keyboard-o"></i> Input';
+                        break;
+                    case 'Button':
+                        layerNames[layer].innerHTML = '<i class="fa fa-square"></i> Button'; //!icon
+                        break;
+                    case 'Image':
+                        layerNames[layer].innerHTML = '<i class="fa fa-file-image-o"></i> Image';
+                        break;
+                    case 'Video':
+                        layerNames[layer].innerHTML = '<i class="fa fa-file-video-o"></i> Video';
+                        break;
+                    case 'Row':
+                        layerNames[layer].innerHTML = '<i class="fa fa-ellipsis-h"></i> Row';
+                        break;
+                    case 'Cell':
+                        layerNames[layer].innerHTML = '<i class="fa fa-ellipsis-v"></i> Cell';
+                        break;
+                    case 'Column':
+                        layerNames[layer].innerHTML = '<i class="fa fa-ellipsis-v"></i> Column';
+                        break;
+                    case 'Map':
+                        layerNames[layer].innerHTML = '<i class="fa fa-map-o"></i> Map';
+                        break;
+                    case 'Label':
+                        layerNames[layer].innerHTML = '<i class="fa fa-tag"></i> Label';
+                        break;
+                    case 'Checkbox':
+                        layerNames[layer].innerHTML = '<i class="fa fa-check-square-o"></i> Checkbox';
+                        break;
+                    case 'Textarea':
+                        layerNames[layer].innerHTML = '<i class="fa fa-align-left"></i> Textarea';
+                        break;
+                    case 'Select':
+                        layerNames[layer].innerHTML = '<i class="fa fa-caret-square-o-down"></i> Select';
+                        break;
+                    case 'Radio':
+                        layerNames[layer].innerHTML = '<i class="fa fa-dot-circle-o"></i> Radio';
+                        break;
+                    case 'Form':
+                        layerNames[layer].innerHTML = '<i class="fa fa-address-card-o"></i> Form'; //!icon
+                        break;
+                    case 'Svg':
+                        layerNames[layer].innerHTML = '<i class="fa fa-diamond"></i> Svg';
+                        break;
+                    case 'Nav':
+                        layerNames[layer].innerHTML = '<i class="fa fa-bars"></i> Nav';
+                        break;
+                    default:
+                        layerNames[layer].innerHTML = '<i class="fa fa-cube"></i> ' + layerNames[layer].innerHTML;
+                }
+            }
+        }
     }
 
     /**
@@ -81,6 +221,9 @@ class Manager {
         pt.style.display = "none";
         w.addEventListener('click', () => this.pageTabs());
         document.getElementById(propertiesTab.id).addEventListener('click', () => this.pageTabs());
+        //?way to map newly added components
+        editor.on('block:drag:stop', () => this.layerIconMap());
+        //editor.on('component:clone', () => layerIconMap());
     }
 
     pageTabs() {

@@ -13,6 +13,10 @@ class Settings {
             market: false,
             branding: true
         };
+        const clbErr = err => {
+            console.error("Failed to load settings...");
+            //console.error(err);
+        };
         fs.viewProject(res => {
             //todo init settings
             this.settings.name = res.name;
@@ -27,7 +31,7 @@ class Settings {
             this.settings.branding = res.branding;
             this.buildSettings();
             console.log("Settings loaded");
-        });
+        }, clbErr);
     }
 
     buildSettings() {

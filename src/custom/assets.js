@@ -17,7 +17,8 @@ class Assets {
             console.log('Assets loaded successfully');
         }
         const clbErr = (err) => {
-            console.error("Failed to load assets because ", err);
+            console.error("Failed to load assets...");
+            //console.error(err);
         }
         rs.request(editor.Config.assetManager.upload, {
             method: 'get'
@@ -70,7 +71,8 @@ class Assets {
             console.log("Asset upload success");
         });
         editor.on('asset:upload:error', err => {
-            console.error("Failed to upload because ", err);
+            console.error("Failed to upload...");
+            //console.error(err);
         });
     }
 

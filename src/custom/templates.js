@@ -1,6 +1,21 @@
+import {
+    customBlocksTab,
+    marketBlocksTab
+} from './../consts';
+
 class Templates {
-    constructor(templates) {
-        this.buildTemplatesPanel(templates);
+    constructor() {
+        this.templates = null;
+        const clb = (res) => {
+            this.templates = res;
+            this.buildTemplatesPanel(res);
+            console.log("Blocks loaded...");
+        }
+        const clbErr = (err) => {
+            console.error(err);
+        }
+        const fs = editor.StorageManager.get('flow-storage');
+        fs.loadBlock(clb, clbErr);
     }
 
     /**
@@ -8,9 +23,7 @@ class Templates {
      * @param {Object} templates block object
      */
     buildTemplatesPanel(templates) {
-        let templatesMenu = this.buildTemplates(templates);
-        document.querySelector('#templates').appendChild(templatesMenu);
-        //editor.on('component:selected', () => this.openAddModal());
+        document.getElementById(customBlocksTab.id + '-tab').appendChild(this.buildFromBlockManager(templates));
     }
 
     buildTemplates(templates) {
@@ -28,6 +41,29 @@ class Templates {
             cont.appendChild(template);
         }
         return cont;
+    }
+
+    buildFromBlockManager(templates) {
+        const bm = editor.BlockManager;
+        const categories = [];
+        for (let template in templates) {
+            //todo customize labels if preview avalable and place decriptions
+            bm.add(templates.name + '-' + templates[template].id, {
+                label: templates[template].name,
+                content: templates[template].html + '<style>' + templates[template].css + '</style>',
+                //? '<script>'+templates[template].js+'</script>'
+                category: templates[template].category,
+                attributes: {
+                    class: 'fa fa-cube'
+                }
+            });
+            categories.push(templates[template].category);
+        }
+        const all = bm.getAll(); //! find method for checking equality with any string in the array.
+        const custom = all.filter(block => block.attributes.category.id == categories);
+        return bm.render(custom, {
+            external: true
+        });
     }
 }
 

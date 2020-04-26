@@ -3,6 +3,7 @@ import pluginBlocks from 'grapesjs-blocks-basic';
 import pluginNavbar from 'grapesjs-navbar';
 import pluginCountdown from 'grapesjs-component-countdown';
 import pluginForms from 'grapesjs-plugin-forms';
+import pluginBs4 from 'grapesjs-blocks-bootstrap4';
 import pluginExport from 'grapesjs-plugin-export';
 //import pluginAviary from 'grapesjs-aviary';
 import pluginFilestack from 'grapesjs-plugin-filestack';
@@ -18,6 +19,7 @@ import pluginCustomCode from 'grapesjs-custom-code';
 import pluginTyped from 'grapesjs-typed';
 import pluginImageEditor from 'grapesjs-tui-image-editor';
 import pluginLorySlider from 'grapesjs-lory-slider';
+//import pluginCke from 'grapesjs-plugin-ckeditor';
 
 import commands from './commands';
 import blocks from './blocks';
@@ -161,6 +163,10 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     // By setting this option to `false` will avoid loading the plugin
     formsOpts: {},
 
+    // `grapesjs-blocks-bootsrap4` plugin options
+    // By setting this option to `false` will avoid loading the plugin
+    bs4Opts: {},
+
     // `grapesjs-plugin-export` plugin options
     // By setting this option to `false` will avoid loading the plugin
     exportOpts: {
@@ -251,6 +257,38 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     // Filestack library should be included manually
     // By setting this option to `false` will avoid loading the plugin
     filestackOpts: 0,
+
+    // `grapesjs-plugin-ckeditor` plugin options, disabled by default
+    // ckeditor library should be included manually
+    // By setting this option to `false` will avoid loading the plugin
+    //ckeOpts: {
+    //  position: 'center',
+    //  options: {
+    //    startupFocus: true,
+    //    extraAllowedContent: '*(*);*{*}', // Allows any class and any inline style
+    //    allowedContent: true, // Disable auto-formatting, class removing, etc.
+    //    enterMode: CKEDITOR.ENTER_BR,
+    //    extraPlugins: 'sharedspace,justify,colorbutton,panelbutton,font',
+    //    toolbar: [{
+    //        name: 'styles',
+    //        items: ['Font', 'FontSize']
+    //      },
+    //      ['Bold', 'Italic', 'Underline', 'Strike'],
+    //      {
+    //        name: 'paragraph',
+    //        items: ['NumberedList', 'BulletedList']
+    //      },
+    //      {
+    //        name: 'links',
+    //        items: ['Link', 'Unlink']
+    //      },
+    //      {
+    //        name: 'colors',
+    //        items: ['TextColor', 'BGColor']
+    //      },
+    //    ],
+    //  }
+    //}
   };
 
   // Load defaults
@@ -277,7 +315,9 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     codeOpts,
     typedOpts,
     imgeditorOpts,
-    sliderOpts
+    sliderOpts,
+    bs4Opts
+    //ckeOpts
   } = config;
 
   // Load plugins
@@ -288,6 +328,7 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
   tabsOpts && pluginTabs(editor, tabsOpts);
   tooltipOpts && pluginTooltip(editor, tooltipOpts);
   flexboxOpts && pluginBlocksFlexbox(editor, flexboxOpts);
+  bs4Opts && pluginBs4(editor, bs4Opts);
   touchOpts && pluginTouch(editor, touchOpts);
   filterOpts && pluginStyleFilter(editor, filterOpts);
   bgOpts && pluginBg(editor, bgOpts);
@@ -299,6 +340,7 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
   sliderOpts && pluginLorySlider(editor, sliderOpts);
   //aviaryOpts && pluginAviary(editor, aviaryOpts);
   filestackOpts && pluginFilestack(editor, filestackOpts);
+  //ckeOpts && pluginCke(editor, ckeOpts);
 
   // Load components
   components(editor, config);
@@ -325,9 +367,13 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
   });
 
   //Load Custom Menu
-  editor.on('load', function () {
+  editor.on('load', () => {
     let customMenu = null;
     if (!customMenu) customMenu = new CustomMenu();
+    //Close Block Manager Panes
+    editor.BlockManager.getCategories().each(function (ctg) {
+      ctg.set('open', false);
+    });
   })
 
   //Style manager extensions
@@ -336,11 +382,6 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     property: 'filter',
     type: 'filter',
     full: 1,
-  });
-
-  //Close Block Manager Panes
-  editor.BlockManager.getCategories().each(function (ctg) {
-    ctg.set('open', false);
   });
 
   // Store and load events
