@@ -14,10 +14,10 @@ class Assets {
                 as.add(url);
             }
             this.buildAssetsPanel();
-            console.log('Assets loaded successfully');
+            console.log('Assets loaded');
         }
         const clbErr = (err) => {
-            console.error("Failed to load assets...");
+            console.error("Failed to load assets...", err);
             //console.error(err);
         }
         rs.request(editor.Config.assetManager.upload, {

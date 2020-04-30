@@ -5,6 +5,8 @@ import {
     propertiesTab
 } from './../consts';
 
+const $ = document.getElementById.bind(document);
+
 class Manager {
     constructor(projects) {
         //TODO SET PROJECT URL DYNAMICALLY;
@@ -29,7 +31,7 @@ class Manager {
             slug: '',
         };
         const clbErr = err => {
-            console.error("Error while loading project...");
+            console.error("Error while loading project...", err);
             //console.error(err);
         }
         fs.viewProject(res => {
@@ -274,42 +276,11 @@ class Manager {
         //todo use modal to give options for new page creation
         const input = document.createElement('input');
         input.placeholder = "Enter page name then enter";
-        const modal = editor.Modal;
-        const mdlClass = 'gjs-mdl-dialog-sm';
         input.addEventListener('change', (e) => {
-            var mdlDialog = document.querySelector('.gjs-mdl-dialog');
-            mdlDialog.className += ' ' + mdlClass;
-            infoContainer.style.display = 'block';
-            modal.setTitle('<div>Create Page</div>');
-            modal.setContent(`
-            <div style="font-size:14px">Select page template to create...</div>
-            <div class="gjs-blocks-c">
-            <div class="fa fa-square-o gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
-            <div class="gjs-block-label">blank</div>
-            </div>
-            <div class="fa fa-home gjs-block gjs-one-bg gjs-four-color-h" title="landing1" style="cursor: pointer;">
-            <div class="gjs-block-label">home</div>
-            </div>
-            <div class="fa fa-info-circle gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
-            <div class="gjs-block-label">about</div>
-            </div>
-            <div class="fa fa-credit-card gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
-            <div class="gjs-block-label">pricing</div>
-            </div>
-            <div class="fa fa-th gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
-            <div class="gjs-block-label">blog</div>
-            </div>
-            <div class="fa fa-shopping-bag gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
-            <div class="gjs-block-label">products</div>
-            </div>
-            </div>
-            `);
-            document.getElementById('info-panel').style.display = "none";
-            modal.open();
-            modal.getModel().once('change:open', function () {
-                mdlDialog.className = mdlDialog.className.replace(mdlClass, '');
-                document.getElementById('info-panel').style.display = "none";
-            });
+            if (e.target.value !== "") {
+                this.name = e.target.value;
+                this.buildPagesModal();
+            }
         });
 
         iField.appendChild(input);
@@ -321,6 +292,7 @@ class Manager {
         const pjTitle = document.createElement('div');
         const iconC = document.createElement('i');
         const iconF = document.createElement('i');
+        group.id = "project-pages";
         group.className += "gjs-block-category gjs-open";
         iconC.className += "gjs-caret-icon fa fa-caret-down";
         iconF.className += "gjs-caret-icon fa fa-folder-open-o";
@@ -352,59 +324,115 @@ class Manager {
         group.appendChild(pjTitle);
         if (this.project.length > 0) {
             for (let page in this.project) {
-                //const element = pages[j];
-                const pgTitle = document.createElement('div');
-                const iconP = document.createElement('i');
-                iconP.className += "page-icon fa fa-file-o";
-                pgTitle.dataset.index = this.project[page].uuid; //todo not index but uuid
-                if (page.uuid == this.currentIndex)
-                    pgTitle.className += "page gjs-title page-open";
-                else
-                    pgTitle.className += "page gjs-title ";
-                const iconX = document.createElement('i');
-                iconX.className += "close fa fa-trash-o";
-                iconX.title = "delete";
-                //todo rewrite the destroy function so that it sends delete request to the server
-                iconX.addEventListener('click', e => {
-                    //todo fix this function so that it does not conflict with the switch page function
-                    //*let p = e.currentTarget.parentNode
-                    //?p.style.display = "none";
-                    //!this.deletePage();
-                    console.warn("Delete here");
-                })
-                //console.log(i, j);
-                //todo rewrite save function so that it sends a save request to the server
-                //todo rewrite switchPage function so that it fetches the required page from server
-                pgTitle.addEventListener('click', e => {
-                    if (e.currentTarget.title != "delete") {
-                        //todo check if event is equal to the current open page
-                        if (e.currentTarget.dataset.index != this.currentIndex) {
-                            this.storePage();
-                            //todo change the load url
-                            editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + e.currentTarget.dataset.index;
-                            this.loadPage();
-                            //todo change the storage url -> load url
-                            editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + e.currentTarget.dataset.index + "/";
-                            this.currentIndex = e.currentTarget.dataset.index;
-                            let p = e.currentTarget.parentNode;
-                            let c = p.childNodes;
-                            for (let i = 1; i < c.length; i++) {
-                                c[i].className = c[i].className.replace("page-open", "");
-                            }
-                            e.currentTarget.className += "page-open";
-                        }
-                    }
-                });
-                //todo add double click event for editting the page names
-                pgTitle.appendChild(iconP);
-                pgTitle.innerHTML += this.project[page].name;
-                pgTitle.appendChild(iconX);
-                group.appendChild(pgTitle);
+                group.appendChild(this.buildPage(this.project[page]));
             }
         }
         cont.appendChild(group);
         this.project = null; //?Destroy the object
         return cont;
+    }
+
+    /**
+     * Build a single page with given data
+     * @param {Object} page page data e.g {name:"", assets:"", components:"", style:"", html:"", css:""} 
+     */
+    buildPage(page) {
+        const pgTitle = document.createElement('div');
+        const iconP = document.createElement('i');
+        iconP.className += "page-icon fa fa-file-o";
+        pgTitle.dataset.index = page.uuid; //todo not index but uuid
+        if (page.uuid == this.currentIndex)
+            pgTitle.className += "page gjs-title page-open";
+        else
+            pgTitle.className += "page gjs-title ";
+        const iconX = document.createElement('i');
+        iconX.className += "close fa fa-trash-o";
+        iconX.title = "delete";
+        //todo rewrite the destroy function so that it sends delete request to the server
+        iconX.addEventListener('click', e => {
+            //todo fix this function so that it does not conflict with the switch page function
+            //*let p = e.currentTarget.parentNode
+            //?p.style.display = "none";
+            //!this.deletePage();
+            console.warn("Delete here");
+        })
+        //console.log(i, j);
+        //todo rewrite save function so that it sends a save request to the server
+        //todo rewrite switchPage function so that it fetches the required page from server
+        pgTitle.addEventListener('click', e => {
+            if (e.currentTarget.title != "delete") {
+                //todo check if event is equal to the current open page
+                if (e.currentTarget.dataset.index != this.currentIndex) {
+                    this.storePage();
+                    //todo change the load url
+                    editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + e.currentTarget.dataset.index;
+                    this.loadPage();
+                    //todo change the storage url -> load url
+                    editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + e.currentTarget.dataset.index + "/";
+                    this.currentIndex = e.currentTarget.dataset.index;
+                    let p = e.currentTarget.parentNode;
+                    let c = p.childNodes;
+                    for (let i = 1; i < c.length; i++) {
+                        c[i].className = c[i].className.replace("page-open", "");
+                    }
+                    e.currentTarget.className += "page-open";
+                }
+            }
+        });
+        //todo add double click event for editting the page names
+        pgTitle.appendChild(iconP);
+        pgTitle.innerHTML += page.name;
+        pgTitle.appendChild(iconX);
+        return pgTitle;
+    }
+
+    buildPagesModal() {
+        const modal = editor.Modal;
+        const mdlClass = 'gjs-mdl-dialog-sm';
+        var mdlDialog = document.querySelector('.gjs-mdl-dialog');
+        mdlDialog.className += ' ' + mdlClass;
+        infoContainer.style.display = 'block';
+        modal.setTitle('<div>Create Page</div>');
+        modal.setContent(`
+            <div style="font-size:14px">Select page template to create...</div>
+            <div class="gjs-blocks-c">
+            <div id="create-blank" class="fa fa-square-o gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">blank</div>
+            </div>
+            <div class="fa fa-home gjs-block gjs-one-bg gjs-four-color-h" title="landing1" style="cursor: pointer;">
+            <div class="gjs-block-label">home</div>
+            </div>
+            <div class="fa fa-info-circle gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">about</div>
+            </div>
+            <div class="fa fa-credit-card gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">pricing</div>
+            </div>
+            <div class="fa fa-th gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">blog</div>
+            </div>
+            <div class="fa fa-shopping-bag gjs-block gjs-one-bg gjs-four-color-h" title="default" style="cursor: pointer;">
+            <div class="gjs-block-label">products</div>
+            </div>
+            </div>
+            `);
+        $('create-blank').addEventListener('click', () => {
+            this.createPage({
+                name: this.name,
+                assets: "[]",
+                components: "[]",
+                style: "[]",
+                html: "",
+                css: ""
+            });
+            modal.close();
+        });
+        document.getElementById('info-panel').style.display = "none";
+        modal.open();
+        modal.getModel().once('change:open', function () {
+            mdlDialog.className = mdlDialog.className.replace(mdlClass, '');
+            document.getElementById('info-panel').style.display = "none";
+        });
     }
 
     buildPropertiesSection() {
@@ -498,11 +526,11 @@ class Manager {
 
     storePage() {
         //? run regularly
-        editor.store(res => console.log('Store page'));
+        editor.store(res => console.log('Saved page before switching'));
     }
 
     loadPage() {
-        return editor.load(res => {
+        const clb = res => {
             editor.setComponents(JSON.parse(res.components.replace(/^"|"$/g, "")));
             editor.setStyle(JSON.parse(res.styles.replace(/^"|"$/g, "")));
             this.properties.name = res.name;
@@ -515,12 +543,31 @@ class Manager {
             const tab = document.querySelector('#properties-tab');
             tab.innerHTML = "";
             tab.appendChild(propertiesMenu);
-        });
+            console.log("Loaded " + res.name + " page");
+        }
+        const clbErr = err => {
+            console.error(err);
+        }
+        const fs = editor.StorageManager.get('flow-storage');
+        fs.load(clb, clbErr);
     }
 
-    createPage() {
+    /**
+     * Called when creating a new page
+     * @param {Object} data page data e.g {name:"", assets:"", components:"", style:"", html:"", css:""}
+     */
+    createPage(data) {
         const fs = editor.StorageManager.get('flow-storage');
-        fs.create(res => console.log('Create page'));
+        const clb = (res) => {
+            //? build and append page to the panel
+            const pages = document.getElementById("project-pages");
+            pages.appendChild(this.buildPage(res));
+            console.log("Page created...");
+        }
+        const clbErr = (err) => {
+            console.error(err);
+        }
+        fs.create(data, clb, clbErr);
     }
 
     deletePage() {

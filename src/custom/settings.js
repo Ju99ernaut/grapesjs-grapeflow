@@ -14,7 +14,7 @@ class Settings {
             branding: true
         };
         const clbErr = err => {
-            console.error("Failed to load settings...");
+            console.error("Failed to load settings...", err);
             //console.error(err);
         };
         fs.viewProject(res => {

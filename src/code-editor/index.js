@@ -327,12 +327,11 @@ class CodeEditor {
             preview.style.display = "block";
             this.editor.Modal.close();
             htmlToImage.toJpeg(document.getElementById('preview').firstChild, {
-                quality: 0.95
+                quality: 0.05,
             }).then(dataUrl => {
                 preview.style.display = "none";
-                console.log(dataUrl);
                 this.properties.preview = dataUrl;
-                fs.storeBlock(this.properties, clb, clbErr);
+                fs.storeBlock(this.properties, clb, clbErr); //!reload blocks
             }).catch(err => {
                 console.error("Error saving preview ", err); //!
             });
