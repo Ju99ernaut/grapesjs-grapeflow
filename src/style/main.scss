@@ -110,6 +110,22 @@ html {
   background: url("./img/flex-al-center.png") no-repeat center;
 }
 
+.icon-disp-block {
+  background: url("./img/disp-block.png") no-repeat center;
+}
+
+.icon-disp-inline-block {
+  background: url("./img/disp-inline-block.png") no-repeat center;
+}
+
+.icon-disp-inline {
+  background: url("./img/disp-inline.png") no-repeat center;
+}
+
+.icon-disp-flex {
+  background: url("./img/disp-flex.png") no-repeat center;
+}
+
 .gjs-radio-item-label {
   cursor: pointer;
   display: block;
@@ -165,7 +181,7 @@ html {
   width: 200px;
   height: 94%;
   color: $secondaryColor;
-  background-color: #403444f3;
+  background-color: $leftMenuColor;
   box-shadow: 0 2px 3px 1px #161616, 0 6px 0px 0px #403444f3;
   -webkit-box-shadow: 0 2px 3px 1px #161616, 0 6px 0px 0px #403444f3;
   font-family: Arial, Helvetica, sans-serif;
@@ -178,6 +194,17 @@ html {
       -webkit-animation-delay: 2s;
       animation: slide-in 0.5s forwards;
       animation-delay: 2s;*/
+}
+
+.left-menu-expanded .gjs-radio-item .gjs-radio-item-label {
+  background-color: $leftMenuColor;
+}
+
+.left-menu-expanded .gjs-radio-item input:checked+.gjs-radio-item-label {
+  background-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.25) inset;
+  color: $quaternaryColor;
+  border-bottom: 1.5px solid $quaternaryColor;
 }
 
 .left-menu-expanded::-webkit-scrollbar {
@@ -207,6 +234,11 @@ html {
   color: $quaternaryColor;
 }
 
+.left-menu-icons.gjs-pn-btn.gjs-pn-active {
+  color: $quaternaryColor;
+  border-left: 2px solid $quaternaryColor;
+}
+
 .left.gjs-am-preview-cont {
   cursor: move;
   width: 70%;
@@ -232,6 +264,10 @@ html {
   color: $quaternaryColor;
 }
 
+#left-menu-abs.gjs-pn-btn.gjs-pn-active {
+  color: $quaternaryColor;
+}
+
 #left-menu-trans {
   margin-bottom: 50px;
   padding-top: 7px;
@@ -247,6 +283,10 @@ html {
   color: $quaternaryColor;
 }
 
+#left-menu-trans.gjs-pn-btn.gjs-pn-active {
+  color: $quaternaryColor;
+}
+
 #left-menu-cls {
   margin-bottom: 0px;
   padding-left: 10px;
@@ -259,7 +299,7 @@ html {
   bottom: 0px;
   left: 0px;
   color: $secondaryColor;
-  background-color: #362c3a;
+  background-color: #2b232e;
 }
 
 #left-menu-cls:hover {
@@ -275,7 +315,7 @@ html {
 
 .gjs-title.page {
   padding: 9px 10px 9px 30px;
-  background-color: #493c4d;
+  background-color: $leftMenuColor;
   border-bottom: 1px solid rgba(31, 31, 31, 0.25);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -316,6 +356,25 @@ html {
   float: right;
 }
 
+.gjs-field.gjs-field-class_select select {
+  background-color: #28222b;
+}
+
+#extra-tab .gjs-block {
+  width: 100%;
+  padding: 1px;
+}
+
+.gjs-thumb {
+  padding: 0px 0px 2px 0px;
+}
+
+.gjs-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .gjs-pn-devices {
   margin: 0;
   position: absolute;
@@ -337,7 +396,10 @@ html {
   height: 40px;
   padding: 10px;
   width: 25%;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+.gjs-pn-views .gjs-pn-btn.gjs-pn-active {
+  border-bottom: 2px solid $quaternaryColor;
 }
 
 .gjs-pn-devices .gjs-pn-btn {

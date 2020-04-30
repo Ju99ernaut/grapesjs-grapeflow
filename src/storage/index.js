@@ -154,7 +154,7 @@ export default (editor, config) => {
          * @param {Function} clbErr Callback function to call in case of errors
          */
         loadBlock(clb, clbErr) {
-            rs.request(config.urlLoadBlocks, {
+            rs.request(config.urlLoadTemplates, {
                 method: 'get'
             }, clb, clbErr);
         },
@@ -166,7 +166,7 @@ export default (editor, config) => {
          * @param {Function} clbErr Callback function to call in case of errors
          */
         storeBlock(data, clb, clbErr) {
-            rs.request(config.urlStoreBlocks, {
+            rs.request(config.urlStoreTemplates, {
                 body: data
             }, clb, clbErr);
         },

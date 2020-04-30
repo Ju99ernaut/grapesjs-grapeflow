@@ -1,5 +1,9 @@
 import Split from 'split.js';
-import html2canvas from '@trainiac/html2canvas';
+import htmlToImage from 'html-to-image';
+import {
+    propertiesTab
+} from '../consts';
+//import html2canvas from '@trainiac/html2canvas';
 
 const $ = document.getElementById.bind(document);
 
@@ -7,8 +11,9 @@ class CodeEditor {
     constructor(editor) {
         this.editor = editor;
         this.isShowing = true;
+        this.ccid = "";
         this.properties = {
-            category: '',
+            category: 'Other',
             name: '',
             description: '',
             preview: '',
@@ -16,6 +21,9 @@ class CodeEditor {
             css: '',
             script: ''
         };
+        const preview = document.createElement('div');
+        preview.id = "preview";
+        document.body.appendChild(preview);
         this.buildCodePanel();
     }
 
@@ -56,13 +64,14 @@ class CodeEditor {
         const section = document.createElement('section');
         section.innerHTML = `<div class="codepanel-separator">
         <div class="codepanel-label">${type}</div>
-        <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save</button>
+        <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
         </div>`;
         if (type == "html") {
             section.innerHTML = `<div class="codepanel-separator">
             <div class="codepanel-label">${type}</div>
             <button class="gjs-btn-prim" id="save-component"><i class="fa fa-link-floppy-o"></i>Save Component</button>
-            <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save</button>
+            <button class="gjs-btn-prim" id="save-all"><i class="fa fa-link-floppy-o"></i>Save All</button>
+            <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
             </div>`;
         }
         section.appendChild(textArea);
@@ -90,6 +99,10 @@ class CodeEditor {
 
         $('cp-save-html').addEventListener('click', this.updateHtml.bind(this));
         $('cp-save-css').addEventListener('click', this.updateCss.bind(this));
+        $('save-all').addEventListener('click', () => {
+            this.updateHtml();
+            this.updateCss();
+        });
         $('save-component').addEventListener('click', this.openAddModal.bind(this));
 
         Split(sections, {
@@ -101,13 +114,14 @@ class CodeEditor {
         });
 
         this.editor.on('component:add', model => {
-            this.updateEditorContents()
+            this.editor.select(model);
+            this.updateEditorContents();
         });
         this.editor.on('component:remove', model => {
-            this.updateEditorContents()
+            this.updateEditorContents();
         });
         this.editor.on('component:update', model => {
-            this.updateEditorContents()
+            this.updateEditorContents();
         });
 
         return this.codePanel;
@@ -161,7 +175,7 @@ class CodeEditor {
         for (let pair in selectorRules) {
             let rulePair = selectorRules[pair].split(/(?={)/g);
             //? selector eg. #id, rule eg. {color: 'red'}
-            if(!/^@/.test(rulePair[0]))
+            if (!/^@/.test(rulePair[0]))
                 cc.setRule(rulePair[0], rulePair[1].replace("{", ""));
         }
         console.log("Component css rules updated");
@@ -171,6 +185,7 @@ class CodeEditor {
         if (!this.isShowing) return;
         const component = this.editor.getSelected();
         if (component !== undefined) {
+            this.ccid = component.ccid;
             this.htmlCodeEditor.setContent(component.toHTML());
             this.cssCodeEditor.setContent(this.editor.CodeManager.getCode(component, 'css', {
                 cssc: this.editor.CssComposer
@@ -208,9 +223,28 @@ class CodeEditor {
         const right = document.createElement('div');
         right.className += "gjs-cm-editor-c";
         const properties = [{
-                name: 'category',
+                name: 'category', //todo make dropdown
                 label: 'Category <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. card'
+                placeholder: 'eg. card',
+                options: [{
+                        value: 'Other'
+                    },
+                    {
+                        value: 'Intros'
+                    },
+                    {
+                        value: 'Buttons'
+                    },
+                    {
+                        value: 'Pricing'
+                    },
+                    {
+                        value: 'Contact'
+                    },
+                    {
+                        value: 'Cards'
+                    }
+                ]
             },
             {
                 name: 'name',
@@ -223,9 +257,11 @@ class CodeEditor {
                 placeholder: 'eg. description'
             },
         ];
+
         for (let prop in properties) {
+            const div = document.createElement('div');
             const iField = document.createElement('div');
-            iField.className += "gjs-field";
+            iField.className += properties[prop].name == "category" ? "gjs-field gjs-field-select" : "gjs-field";
             iField.style.margin = "5px 5px 10px 5px";
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
@@ -235,8 +271,16 @@ class CodeEditor {
             if (properties[prop].name == 'description') {
                 input = document.createElement('textarea');
                 input.style.minHeight = "330px";
-            } else
-                iField.style.maxWidth = "100%";
+            } else if (properties[prop].name == 'category') {
+                input = document.createElement('select');
+                const options = properties[prop].options;
+                for (let opt in options) {
+                    const option = document.createElement('option');
+                    option.value = options[opt].value;
+                    option.innerHTML = options[opt].value;
+                    input.appendChild(option);
+                }
+            }
             input.placeholder = properties[prop].placeholder;
             input.name = properties[prop].name;
             //input.value = this.properties[properties[prop].name];
@@ -249,21 +293,15 @@ class CodeEditor {
             left.appendChild(label);
             left.appendChild(iField);
         }
-        let iField = document.createElement('div');
-        iField.id = "preview";
+        const iField = document.createElement('div');
         iField.className += "gjs-field";
         iField.style.margin = "5px 5px 10px 5px";
         iField.style.height = "450px";
         iField.style.overflowY = "scroll";
-        let label = document.createElement('div');
-        label.innerHTML = 'Preview <i class="fa fa-camera"></i>';
+        const label = document.createElement('div');
+        label.innerHTML = 'Snapshot <i class="fa fa-camera"></i>';
         label.style.marginLeft = "8px";
         label.style.fontSize = "16px";
-        //const pr = document.createElement('div');
-        //pr.style.minHeight = "446px";
-        //let doc = new DOMParser().parseFromString(this.htmlCodeEditor.editor.getValue(), "text/xml")
-        //html2canvas(doc).then(canvas => document.body.appendChild(canvas));
-        //iField.appendChild(pr);
         iField.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
             this.cssCodeEditor.editor.getValue() + '</style>';
         right.appendChild(label);
@@ -282,13 +320,56 @@ class CodeEditor {
                 console.error(err);
             }
             const fs = editor.StorageManager.get('flow-storage');
-            //fs.storeBlock(this.properties, clb, clbErr);
-            html2canvas(document.getElementById('preview').firstChild).then(canvas => document.body.appendChild(canvas));
+            console.log("Procesing block " + this.ccid + "...");
+            const preview = document.getElementById('preview');
+            preview.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
+                this.cssCodeEditor.editor.getValue() + '</style>';
+            preview.style.display = "block";
+            this.editor.Modal.close();
+            htmlToImage.toJpeg(document.getElementById('preview').firstChild, {
+                quality: 0.95
+            }).then(dataUrl => {
+                preview.style.display = "none";
+                console.log(dataUrl);
+                this.properties.preview = dataUrl;
+                fs.storeBlock(this.properties, clb, clbErr);
+            }).catch(err => {
+                console.error("Error saving preview ", err); //!
+            });
         });
         cont.appendChild(left);
         cont.appendChild(right);
         cont.appendChild(b);
         return cont;
+    }
+
+    /**
+     * Convert base64 url to blob
+     * @param {String} base64 base64 embeded url
+     */
+    b64ToBlob(base64) {
+        const mime = base64.split(";")[0].split(":")[1];
+        const sliceSize = 1024;
+        const base64ImageContent = base64.replace(/^data:image\/(png|jpeg);base64,/, "");
+        const byteChars = window.atob(base64ImageContent);
+        let byteArrays = [];
+
+        for (let offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+            const slice = byteChars.slice(offset, offset + sliceSize);
+
+            let byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+
+            let byteArray = new Uint8Array(byteNumbers);
+
+            byteArrays.push(byteArray)
+        }
+
+        return new Blob(byteArrays, {
+            type: mime
+        });
     }
 }
 

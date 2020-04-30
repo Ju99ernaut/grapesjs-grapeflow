@@ -49,64 +49,11 @@ class Manager {
                 editor.setStyle(JSON.parse(this.project[0].styles.replace(/^"|"$/g, "")));
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + this.currentIndex;
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + this.currentIndex + "/";
-                this.migrate();
+                this.layerIconMap();
                 this.buildMangerPanel(this.name, projects); //todo Get project name
                 console.log("Project loaded");
             });
         }, clbErr);
-    }
-
-    migrate() {
-        this.layerIconMap();
-        //const blocksC = document.getElementById('blocks-c');
-        const layersC = document.getElementById('layers-c');
-        //blocksC.style.display = "block";
-        layersC.style.display = "block";
-        //const blocksM = document.getElementById('basic-tab');
-        const layersM = document.getElementById('layers');
-        //blocksM.appendChild(blocksC);
-        this.blockCategories();
-        layersM.appendChild(layersC);
-        const basic = document.getElementById('basic');
-        basic.checked = true;
-        basic.addEventListener('click', () => this.blockTabs());
-        document.getElementById('bootstrap-tab').style.display = "none";
-        document.getElementById('extra-tab').style.display = "none";
-        const bootstrap = document.getElementById('bootstrap');
-        bootstrap.addEventListener('click', () => this.blockTabs());
-        const extra = document.getElementById('extra');
-        extra.addEventListener('click', () => this.blockTabs());
-    }
-
-    blockCategories() {
-        const blockCategories = document.getElementsByClassName('gjs-block-category');
-        const basicTab = document.getElementById('basic-tab');
-        const bs4Tab = document.getElementById('bootstrap-tab');
-        const blockArray = Array.from(blockCategories);
-        blockArray.forEach(category => {
-            if (category.innerText !== undefined) {
-                if (/(Basic|Extra|Form)/.test(category.innerText))
-                    basicTab.appendChild(category);
-                else
-                    bs4Tab.appendChild(category);
-            }
-        });
-    }
-
-    blockTabs() {
-        if (document.getElementById('basic').checked) {
-            document.getElementById('basic-tab').style.display = "block";
-            document.getElementById('bootstrap-tab').style.display = "none";
-            document.getElementById('extra-tab').style.display = "none";
-        } else if (document.getElementById('bootstrap').checked) {
-            document.getElementById('basic-tab').style.display = "none";
-            document.getElementById('bootstrap-tab').style.display = "block";
-            document.getElementById('extra-tab').style.display = "none";
-        } else {
-            document.getElementById('basic-tab').style.display = "none";
-            document.getElementById('bootstrap-tab').style.display = "none";
-            document.getElementById('extra-tab').style.display = "block";
-        }
     }
 
     layerIconMap() {
@@ -132,6 +79,9 @@ class Manager {
                         break;
                     case 'Link':
                         layerNames[layer].innerHTML = '<i class="fa fa-link"></i> Link';
+                        break;
+                    case 'Menu link':
+                        layerNames[layer].innerHTML = '<i class="fa fa-link"></i> Menu link';
                         break;
                     case 'Footer':
                         layerNames[layer].innerHTML = '<i class="fa fa-long-arrow-down"></i> Footer'; //!icon
@@ -182,7 +132,64 @@ class Manager {
                         layerNames[layer].innerHTML = '<i class="fa fa-diamond"></i> Svg';
                         break;
                     case 'Nav':
-                        layerNames[layer].innerHTML = '<i class="fa fa-bars"></i> Nav';
+                        layerNames[layer].innerHTML = '<i class="fa fa-location-arrow"></i> Nav';
+                        break;
+                    case 'Navbar':
+                        layerNames[layer].innerHTML = '<i class="fa fa-map-signs"></i> Navbar';
+                        break;
+                    case 'Navbar Container':
+                        layerNames[layer].innerHTML = '<i class="fa fa-object-group"></i> Navbar Container';
+                        break;
+                    case 'Navbar Menu':
+                        layerNames[layer].innerHTML = '<i class="fa fa-bars"></i> Navbar Menu';
+                        break;
+                    case 'Burger':
+                        layerNames[layer].innerHTML = '<i class="fa fa-bars"></i> Burger';
+                        break;
+                    case 'Burger Line':
+                        layerNames[layer].innerHTML = '<i class="fa fa-window-minimize"></i> Burger Line';
+                        break;
+                    case 'Span':
+                        layerNames[layer].innerHTML = '<i class="fa fa-columns"></i> Span';
+                        break;
+                    case 'Countdown':
+                        layerNames[layer].innerHTML = '<i class="fa fa-clock-o"></i> Countdown';
+                        break;
+                    case 'Tooltip':
+                        layerNames[layer].innerHTML = '<i class="fa fa-commenting-o"></i> Tooltip';
+                        break;
+                    case 'Tabs':
+                        layerNames[layer].innerHTML = '<i class="fa fa-list-alt"></i> Tabs';
+                        break;
+                    case 'Tab':
+                        layerNames[layer].innerHTML = '<i class="fa fa-long-arrow-right"></i> Tabs';
+                        break;
+                    case 'Tab Container':
+                        layerNames[layer].innerHTML = '<i class="fa fa-object-group"></i> Tab Container';
+                        break;
+                    case 'Tab Content':
+                        layerNames[layer].innerHTML = '<i class="fa fa-align-center"></i> Tab Content';
+                        break;
+                    case 'Slider':
+                        layerNames[layer].innerHTML = '<i class="fa fa-sliders"></i> Slider';
+                        break;
+                    case 'Slider Frame':
+                        layerNames[layer].innerHTML = '<i class="fa fa-window-maximize"></i> Slide Frame';
+                        break;
+                    case 'Slides':
+                        layerNames[layer].innerHTML = '<i class="fa fa-file-powerpoint-o"></i> Slides';
+                        break;
+                    case 'Slide':
+                        layerNames[layer].innerHTML = '<i class="fa fa-play-circle-o"></i> Slide';
+                        break;
+                    case 'Nav Previous':
+                        layerNames[layer].innerHTML = '<i class="fa fa-caret-square-o-left"></i> Nav Previous';
+                        break;
+                    case 'Nav Next':
+                        layerNames[layer].innerHTML = '<i class="fa fa-caret-square-o-right"></i> Nav Next';
+                        break;
+                    case 'Typed':
+                        layerNames[layer].innerHTML = '<i class="fa fa-text-height"></i> Typed';
                         break;
                     default:
                         layerNames[layer].innerHTML = '<i class="fa fa-cube"></i> ' + layerNames[layer].innerHTML;

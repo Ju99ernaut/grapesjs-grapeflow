@@ -5,7 +5,7 @@ export default (editor, config) => {
   sm.getSectors().reset(csm && csm.length ? csm : [{
       name: config.textLayout,
       open: false,
-      buildProps: [ /*'alignment', */ 'display', 'float', 'order'],
+      buildProps: [ /*'alignment', */ 'display', 'float'],
       properties: [{
         //name: 'Alignment',
         property: 'float',
@@ -36,25 +36,25 @@ export default (editor, config) => {
           {
             value: 'block',
             title: 'block',
-            className: 'fa fa-square'
+            className: 'icons-flex icon-disp-block'
           },
           {
             value: 'inline',
             title: 'inline',
-            className: 'fa fa-arrows-h'
+            className: 'icons-flex icon-disp-inline'
           },
           {
             value: 'inline-block',
             title: 'inline-block',
-            className: 'fa fa-th-large'
+            className: 'icons-flex icon-disp-inline-block'
           },
           {
             value: 'flex',
             title: 'flex',
-            className: 'fa fa-th'
+            className: 'icons-flex icon-disp-flex'
           }
         ],
-      }, ],
+      }],
     },
     {
       name: config.textFlex,
@@ -62,7 +62,7 @@ export default (editor, config) => {
       properties: [{
           name: 'Flex Container',
           property: 'display',
-          type: 'select',
+          type: 'radio',
           defaults: 'block',
           list: [{
               value: 'block',
@@ -132,7 +132,7 @@ export default (editor, config) => {
             className: 'icons-flex icon-just-sp-cent',
           }],
         }, {
-          name: 'Align',
+          name: 'Align items',
           property: 'align-items',
           type: 'radio',
           defaults: 'center',
@@ -188,7 +188,7 @@ export default (editor, config) => {
             defaults: 'auto',
           }],
         }, {
-          name: 'Align',
+          name: 'Align self',
           property: 'align-self',
           type: 'radio',
           defaults: 'auto',
