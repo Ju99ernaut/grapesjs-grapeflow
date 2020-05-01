@@ -2,10 +2,49 @@
 //Pages Manager
 import {
     pageTab,
-    propertiesTab
+    propertiesTab,
+    pfx,
+    loader,
+    cmdClear
 } from './../consts';
 
 const $ = document.getElementById.bind(document);
+const properties = [{
+        name: 'name',
+        label: 'Name <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. name'
+    },
+    {
+        name: 'thumbnail',
+        label: 'Thumbnail <i class="fa fa-link"></i>',
+        placeholder: 'eg. http://example.com'
+    },
+    {
+        name: 'favicon',
+        label: 'Favicon <i class="fa fa-link"></i>',
+        placeholder: 'eg. http://example.com'
+    },
+    {
+        name: 'webclip',
+        label: 'Webclip <i class="fa fa-link"></i>',
+        placeholder: 'eg. http://example.com'
+    },
+    {
+        name: 'metaTitle',
+        label: 'Meta Title <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. title'
+    },
+    {
+        name: 'metaDesc',
+        label: 'Meta Description <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. description'
+    },
+    {
+        name: 'slug',
+        label: 'Slug <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. slug'
+    },
+];
 
 class Manager {
     constructor(projects) {
@@ -35,7 +74,7 @@ class Manager {
             //console.error(err);
         }
         fs.viewProject(res => {
-            //todo init settings
+            //todo init settings, store projects in memory to prevent multiple server calls
             this.name = res.name;
             fs.loadProject(result => {
                 this.project = result;
@@ -53,7 +92,7 @@ class Manager {
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + this.currentIndex + "/";
                 this.layerIconMap();
                 this.buildMangerPanel(this.name, projects); //todo Get project name
-                console.log("Project loaded");
+                console.log("Project loaded", result);
             });
         }, clbErr);
     }
@@ -265,59 +304,26 @@ class Manager {
 
     buildPagesSection(name) {
         const cont = document.createElement('div');
-        cont.className += "gjs-block-categories";
-        const iField = document.createElement('div');
-        iField.className += "gjs-field";
-        iField.style.margin = "10px 5px 10px 5px";
-        const label = document.createElement('div');
-        label.innerHTML = 'Add Page <i class="fa fa-plus-square"></i>';
-        label.style.marginLeft = "8px";
-        label.style.fontSize = "14px";
-        //todo use modal to give options for new page creation
-        const input = document.createElement('input');
-        input.placeholder = "Enter page name then enter";
-        input.addEventListener('change', (e) => {
-            if (e.target.value !== "") {
-                this.name = e.target.value;
-                this.buildPagesModal();
-            }
-        });
+        cont.className += pfx + "block-categories";
+        const create = this.buildCreateInput();
+        cont.appendChild(create.label);
+        cont.appendChild(create.iField);
+        cont.appendChild(this.buildGroup(name));
+        this.project = null; //?Destroy the object
+        return cont;
+    }
 
-        iField.appendChild(input);
-        cont.appendChild(label);
-        cont.appendChild(iField);
-
-        //*const pages = project.pages;
+    buildGroup(name) {
         const group = document.createElement('div');
         const pjTitle = document.createElement('div');
         const iconC = document.createElement('i');
         const iconF = document.createElement('i');
         group.id = "project-pages";
-        group.className += "gjs-block-category gjs-open";
-        iconC.className += "gjs-caret-icon fa fa-caret-down";
-        iconF.className += "gjs-caret-icon fa fa-folder-open-o";
-        pjTitle.className += "gjs-title";
-        pjTitle.addEventListener('click', function (e) {
-            if (e.currentTarget.parentNode.className == "gjs-block-category gjs-open") {
-                e.currentTarget.firstChild.className = e.currentTarget.firstChild.className.replace("fa-caret-down",
-                    "fa-caret-right");
-                e.currentTarget.parentNode.className = e.currentTarget.parentNode.className.replace("gjs-open", "");
-                e = e.currentTarget.parentNode;
-                e = e.childNodes;
-                for (let i = 1; i < e.length; i++) {
-                    e[i].style.display = "none";
-                }
-            } else {
-                e.currentTarget.firstChild.className = e.currentTarget.firstChild.className.replace("fa-caret-right",
-                    "fa-caret-down");
-                e.currentTarget.parentNode.className += "gjs-open";
-                e = e.currentTarget.parentNode;
-                e = e.childNodes;
-                for (let i = 1; i < e.length; i++) {
-                    e[i].style.display = "block";
-                }
-            }
-        });
+        group.className += pfx + "block-category gjs-open";
+        iconC.className += pfx + "caret-icon fa fa-caret-down";
+        iconF.className += pfx + "caret-icon fa fa-folder-open-o";
+        pjTitle.className += pfx + "title";
+        pjTitle.addEventListener('click', e => this.onCollapse(e));
         pjTitle.appendChild(iconC);
         pjTitle.appendChild(iconF);
         pjTitle.innerHTML += name; //? project.name; name no longer included 
@@ -327,9 +333,54 @@ class Manager {
                 group.appendChild(this.buildPage(this.project[page]));
             }
         }
-        cont.appendChild(group);
-        this.project = null; //?Destroy the object
-        return cont;
+        return group;
+    }
+
+    buildCreateInput() {
+        const iField = document.createElement('div');
+        iField.className += pfx + "field";
+        iField.style.margin = "10px 5px 10px 5px";
+        const label = document.createElement('div');
+        label.innerHTML = 'Add Page <i class="fa fa-plus-square"></i>';
+        label.style.marginLeft = "8px";
+        label.style.fontSize = "14px";
+        //todo use modal to give options for new page creation
+        const input = document.createElement('input');
+        input.placeholder = "Enter page name then unfocus";
+        input.addEventListener('change', (e) => {
+            if (e.target.value !== "") {
+                this.name = e.target.value;
+                this.buildPagesModal();
+            }
+        });
+
+        iField.appendChild(input);
+        return {
+            label,
+            iField
+        };
+    }
+
+    onCollapse(e) {
+        if (e.currentTarget.parentNode.className == pfx + "block-category " + pfx + "open") {
+            e.currentTarget.firstChild.className = e.currentTarget.firstChild.className.replace("fa-caret-down",
+                "fa-caret-right");
+            e.currentTarget.parentNode.className = e.currentTarget.parentNode.className.replace(pfx + "open", "");
+            e = e.currentTarget.parentNode;
+            e = e.childNodes;
+            for (let i = 1; i < e.length; i++) {
+                e[i].style.display = "none";
+            }
+        } else {
+            e.currentTarget.firstChild.className = e.currentTarget.firstChild.className.replace("fa-caret-right",
+                "fa-caret-down");
+            e.currentTarget.parentNode.className += pfx + "open";
+            e = e.currentTarget.parentNode;
+            e = e.childNodes;
+            for (let i = 1; i < e.length; i++) {
+                e[i].style.display = "block";
+            }
+        }
     }
 
     /**
@@ -342,48 +393,47 @@ class Manager {
         iconP.className += "page-icon fa fa-file-o";
         pgTitle.dataset.index = page.uuid; //todo not index but uuid
         if (page.uuid == this.currentIndex)
-            pgTitle.className += "page gjs-title page-open";
+            pgTitle.className += pfx + "title page page-open ";
         else
-            pgTitle.className += "page gjs-title ";
+            pgTitle.className += pfx + "title page ";
         const iconX = document.createElement('i');
         iconX.className += "close fa fa-trash-o";
         iconX.title = "delete";
-        //todo rewrite the destroy function so that it sends delete request to the server
-        iconX.addEventListener('click', e => {
-            //todo fix this function so that it does not conflict with the switch page function
-            //*let p = e.currentTarget.parentNode
-            //?p.style.display = "none";
-            //!this.deletePage();
-            console.warn("Delete here");
-        })
-        //console.log(i, j);
-        //todo rewrite save function so that it sends a save request to the server
-        //todo rewrite switchPage function so that it fetches the required page from server
-        pgTitle.addEventListener('click', e => {
-            if (e.currentTarget.title != "delete") {
-                //todo check if event is equal to the current open page
-                if (e.currentTarget.dataset.index != this.currentIndex) {
-                    this.storePage();
-                    //todo change the load url
-                    editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + e.currentTarget.dataset.index;
-                    this.loadPage();
-                    //todo change the storage url -> load url
-                    editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + e.currentTarget.dataset.index + "/";
-                    this.currentIndex = e.currentTarget.dataset.index;
-                    let p = e.currentTarget.parentNode;
-                    let c = p.childNodes;
-                    for (let i = 1; i < c.length; i++) {
-                        c[i].className = c[i].className.replace("page-open", "");
-                    }
-                    e.currentTarget.className += "page-open";
-                }
-            }
-        });
-        //todo add double click event for editting the page names
+        iconX.addEventListener('click', e => this.onPageDelete(e));
+        pgTitle.addEventListener('click', e => this.onPageSwitch(e));
         pgTitle.appendChild(iconP);
         pgTitle.innerHTML += page.name;
         pgTitle.appendChild(iconX);
         return pgTitle;
+    }
+
+    onPageDelete(e) {
+        //todo fix this function so that it does not conflict with the switch page function
+        //*let p = e.currentTarget.parentNode
+        //?p.style.display = "none";
+        //!this.deletePage();
+        console.warn("Delete here");
+    }
+
+    onPageSwitch(e) {
+        if (e.currentTarget.title != "delete") {
+            //todo check if event is equal to the current open page
+            if (e.currentTarget.dataset.index != this.currentIndex) {
+                this.storePage();
+                //? change the load url
+                editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + e.currentTarget.dataset.index;
+                this.loadPage();
+                //? change the storage url -> load url
+                editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + e.currentTarget.dataset.index + "/";
+                this.currentIndex = e.currentTarget.dataset.index;
+                let p = e.currentTarget.parentNode;
+                let c = p.childNodes;
+                for (let i = 1; i < c.length; i++) {
+                    c[i].className = c[i].className.replace("page-open", "");
+                }
+                e.currentTarget.className += "page-open";
+            }
+        }
     }
 
     buildPagesModal() {
@@ -436,47 +486,11 @@ class Manager {
     }
 
     buildPropertiesSection() {
-        //todo replace projects section with this section
+        //? replace projects section with this section
         const cont = document.createElement('div');
-        const properties = [{
-                name: 'name',
-                label: 'Name <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. name'
-            },
-            {
-                name: 'thumbnail',
-                label: 'Thumbnail <i class="fa fa-link"></i>',
-                placeholder: 'eg. http://example.com'
-            },
-            {
-                name: 'favicon',
-                label: 'Favicon <i class="fa fa-link"></i>',
-                placeholder: 'eg. http://example.com'
-            },
-            {
-                name: 'webclip',
-                label: 'Webclip <i class="fa fa-link"></i>',
-                placeholder: 'eg. http://example.com'
-            },
-            {
-                name: 'metaTitle',
-                label: 'Meta Title <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. title'
-            },
-            {
-                name: 'metaDesc',
-                label: 'Meta Description <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. description'
-            },
-            {
-                name: 'slug',
-                label: 'Slug <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. slug'
-            },
-        ];
         for (let prop in properties) {
             const iField = document.createElement('div');
-            iField.className += "gjs-field";
+            iField.className += pfx + "field";
             iField.style.margin = "5px 5px 10px 5px";
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
@@ -486,42 +500,51 @@ class Manager {
             input.placeholder = properties[prop].placeholder;
             input.name = properties[prop].name;
             input.value = this.properties[properties[prop].name];
-            input.addEventListener('change', e => {
-                let regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
-                let regUrl = new RegExp(regexQuery, "i");
-                if (e.target.value !== "") {
-                    if (e.target.value.match(regUrl) !== null)
-                        this.properties[e.target.name] = e.target.value;
-                    else if (e.target.name != "thumbnail" && e.target.name != "favicon" && e.target.name != "webclip")
-                        this.properties[e.target.name] = e.target.value;
-                    else {
-                        console.warn("Invalid url");
-                        e.target.value = "";
-                    }
-                }
-            });
+            input.addEventListener('change', e => this.checkUrl(e));
 
             iField.appendChild(input);
             cont.appendChild(label);
             cont.appendChild(iField);
         }
+        cont.appendChild(this.updateButton());
+        return cont
+    }
+
+    updateButton() {
         const b = document.createElement('button');
         b.id = "save-properties";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Properties';
         b.style.margin = "10px 5px 10px 5px";
-        b.className += "gjs-btn-prim";
-        b.addEventListener('click', (e) => { //todo ensure request is called if there are changes
-            const clb = (res) => {
-                console.log("Properties updated...")
+        b.className += pfx + "btn-prim";
+        //todo ensure request is called if there are changes
+        b.addEventListener('click', (e) => this.updateProperties(e));
+        return b;
+    }
+
+    updateProperties(e) {
+        const clb = (res) => {
+            console.log("Properties updated...", res);
+        }
+        const clbErr = (err) => {
+            console.error(err);
+        }
+        const fs = editor.StorageManager.get('flow-storage');
+        fs.storeProperties(this.properties, clb, clbErr);
+    }
+
+    checkUrl(e) {
+        const regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
+        const regUrl = new RegExp(regexQuery, "i");
+        if (e.target.value !== "") {
+            if (e.target.value.match(regUrl) !== null)
+                this.properties[e.target.name] = e.target.value;
+            else if (e.target.name != "thumbnail" && e.target.name != "favicon" && e.target.name != "webclip")
+                this.properties[e.target.name] = e.target.value;
+            else {
+                console.warn("Invalid url");
+                e.target.value = "";
             }
-            const clbErr = (err) => {
-                console.error(err);
-            }
-            const fs = editor.StorageManager.get('flow-storage');
-            fs.storeProperties(this.properties, clb, clbErr);
-        });
-        cont.appendChild(b)
-        return cont
+        }
     }
 
     storePage() {
@@ -548,6 +571,7 @@ class Manager {
         const clbErr = err => {
             console.error(err);
         }
+        editor.setComponents(loader);
         const fs = editor.StorageManager.get('flow-storage');
         fs.load(clb, clbErr);
     }
@@ -562,7 +586,7 @@ class Manager {
             //? build and append page to the panel
             const pages = document.getElementById("project-pages");
             pages.appendChild(this.buildPage(res));
-            console.log("Page created...");
+            console.log("Page created...", res);
         }
         const clbErr = (err) => {
             console.error(err);
@@ -575,9 +599,9 @@ class Manager {
         fs.delete(res => console.log('Delete page'));
     }
 
-    /*******************************************************
-     * !This section might be deprecated inside the editor *
-     *******************************************************/
+    /****************************************************************
+     * !This projects section might be deprecated inside the editor *
+     ****************************************************************/
     buildProjectsSection(projects) {
         let cont = document.createElement('div');
         cont.className += "gjs-block-category";

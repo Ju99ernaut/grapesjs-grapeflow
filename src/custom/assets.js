@@ -1,6 +1,7 @@
 import {
     localTab,
-    libraryTab
+    libraryTab,
+    pfx
 } from './../consts';
 
 class Assets {
@@ -14,7 +15,7 @@ class Assets {
                 as.add(url);
             }
             this.buildAssetsPanel();
-            console.log('Assets loaded');
+            console.log('Assets loaded', res);
         }
         const clbErr = (err) => {
             console.error("Failed to load assets...", err);
@@ -68,10 +69,10 @@ class Assets {
             const tab = document.getElementById(localTab.id + '-tab');
             tab.innerHTML = "";
             tab.appendChild(this.buildAssets(assets));
-            console.log("Asset upload success");
+            console.log("Asset upload success", res);
         });
         editor.on('asset:upload:error', err => {
-            console.error("Failed to upload...");
+            console.error("Failed to upload...", err);
             //console.error(err);
         });
     }
@@ -94,45 +95,16 @@ class Assets {
      */
     buildAsset(url, name, dim) {
         const cont = document.createElement('div');
-        cont.className += "gjs-am-asset gjs-am-asset-image";
-
-        const previewCont = document.createElement('div');
-        previewCont.className += "left gjs-am-preview-cont";
-
-        const preview = document.createElement('img');
-        preview.alt = name;
-        preview.style.width = "100%";
-        preview.style.height = "100%";
-        preview.style.objectFit = "contain";
-        preview.style.backgroundColor = "#352b38ce";
-        preview.src = url;
-
-        //let previewBg = document.createElement('div');
-        //previewBg.className += "gjs-am-preview-bg gjs-checker-bg";
-        //previewBg.style.width = "0%";
-
-        previewCont.appendChild(preview);
-        //previewCont.appendChild(previewBg);
-
-        const meta = document.createElement('div');
-        meta.className += "left gjs-am-meta";
-
-        const nameImg = document.createElement('div');
-        nameImg.className += "gjs-am-name";
-        nameImg.title = name;
-        nameImg.innerHTML = name;
-
-        const dimensions = document.createElement('div');
-        dimensions.className += "gjs-am-dimensions";
-        //dimensions.style.width = "30%";
-        dimensions.innerHTML = dim;
-
-        meta.appendChild(nameImg);
-        meta.appendChild(dimensions);
-
-        cont.appendChild(previewCont);
-        cont.appendChild(meta);
-
+        cont.className += pfx + "am-asset " + pfx + "am-asset-image";
+        const image = `
+            <div class="left ${pfx}am-preview-cont">
+                <img alt=${name} src=${url} style="width: 100%; height: 100%; object-fit: contain; background-color: rgba(53, 43, 56, 0.808);">
+            </div>
+            <div class="left ${pfx}am-meta">
+                <div class="${pfx}am-name" title=${name}>${name}</div>
+                <div class="${pfx}am-dimensions">${dim}</div>
+            </div>`
+        cont.innerHTML = image;
         return cont;
     }
 
@@ -142,7 +114,7 @@ class Assets {
      */
     buildAssets(assets) {
         const cont = document.createElement('div');
-        cont.className += "gjs-am-assets";
+        cont.className += pfx + "am-assets";
         cont.style.overflow = "visible";
         for (let i = 0; i < assets.length; i++) {
             //console.log(assets.models[i].attributes);

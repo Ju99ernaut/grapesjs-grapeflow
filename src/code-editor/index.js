@@ -1,11 +1,48 @@
 import Split from 'split.js';
 import htmlToImage from 'html-to-image';
 import {
-    propertiesTab
+    propertiesTab,
+    pfx
 } from '../consts';
 //import html2canvas from '@trainiac/html2canvas';
 
 const $ = document.getElementById.bind(document);
+
+const properties = [{
+        name: 'category', //todo make dropdown
+        label: 'Category <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. card',
+        options: [{
+                value: 'Other'
+            },
+            {
+                value: 'Intros'
+            },
+            {
+                value: 'Buttons'
+            },
+            {
+                value: 'Pricing'
+            },
+            {
+                value: 'Contact'
+            },
+            {
+                value: 'Cards'
+            }
+        ]
+    },
+    {
+        name: 'name',
+        label: 'Name <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. name'
+    },
+    {
+        name: 'description',
+        label: 'Description <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. description'
+    },
+];
 
 class CodeEditor {
     constructor(editor) {
@@ -64,14 +101,14 @@ class CodeEditor {
         const section = document.createElement('section');
         section.innerHTML = `<div class="codepanel-separator">
         <div class="codepanel-label">${type}</div>
-        <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
+        <button class="${pfx}btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
         </div>`;
         if (type == "html") {
             section.innerHTML = `<div class="codepanel-separator">
             <div class="codepanel-label">${type}</div>
-            <button class="gjs-btn-prim" id="save-component"><i class="fa fa-link-floppy-o"></i>Save Component</button>
-            <button class="gjs-btn-prim" id="save-all"><i class="fa fa-link-floppy-o"></i>Save All</button>
-            <button class="gjs-btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
+            <button class="${pfx}btn-prim" id="save-component"><i class="fa fa-link-floppy-o"></i>Save Component</button>
+            <button class="${pfx}btn-prim" id="save-all"><i class="fa fa-link-floppy-o"></i>Save All</button>
+            <button class="${pfx}btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
             </div>`;
         }
         section.appendChild(textArea);
@@ -220,43 +257,6 @@ class CodeEditor {
         cont.className += "gjs-export-dl";
         const left = document.createElement('div');
         left.className += "gjs-cm-editor-c";
-        const right = document.createElement('div');
-        right.className += "gjs-cm-editor-c";
-        const properties = [{
-                name: 'category', //todo make dropdown
-                label: 'Category <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. card',
-                options: [{
-                        value: 'Other'
-                    },
-                    {
-                        value: 'Intros'
-                    },
-                    {
-                        value: 'Buttons'
-                    },
-                    {
-                        value: 'Pricing'
-                    },
-                    {
-                        value: 'Contact'
-                    },
-                    {
-                        value: 'Cards'
-                    }
-                ]
-            },
-            {
-                name: 'name',
-                label: 'Name <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. name'
-            },
-            {
-                name: 'description',
-                label: 'Description <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. description'
-            },
-        ];
 
         for (let prop in properties) {
             const div = document.createElement('div');
@@ -293,6 +293,27 @@ class CodeEditor {
             left.appendChild(label);
             left.appendChild(iField);
         }
+        cont.appendChild(left);
+        cont.appendChild(this.buildPreview());
+        cont.appendChild(this.saveButton());
+        return cont;
+    }
+
+    saveButton() {
+        const b = document.createElement('button');
+        b.id = "save-template";
+        b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Template';
+        b.style.margin = "10px 5px 0px 5px";
+        b.style.float = "right";
+        b.className += "gjs-btn-prim";
+        //todo ensure request is called if there are changes
+        b.addEventListener('click', (e) => this.saveBlock(e));
+        return b
+    }
+
+    buildPreview() {
+        const right = document.createElement('div');
+        right.className += "gjs-cm-editor-c";
         const iField = document.createElement('div');
         iField.className += "gjs-field";
         iField.style.margin = "5px 5px 10px 5px";
@@ -306,40 +327,32 @@ class CodeEditor {
             this.cssCodeEditor.editor.getValue() + '</style>';
         right.appendChild(label);
         right.appendChild(iField);
-        const b = document.createElement('button');
-        b.id = "save-template";
-        b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Template';
-        b.style.margin = "10px 5px 0px 5px";
-        b.style.float = "right";
-        b.className += "gjs-btn-prim";
-        b.addEventListener('click', (e) => { //todo ensure request is called if there are changes
-            const clb = (res) => {
-                console.log("Block saved...");
-            }
-            const clbErr = (err) => {
-                console.error(err);
-            }
-            const fs = editor.StorageManager.get('flow-storage');
-            console.log("Procesing block " + this.ccid + "...");
-            const preview = document.getElementById('preview');
-            preview.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
-                this.cssCodeEditor.editor.getValue() + '</style>';
-            preview.style.display = "block";
-            this.editor.Modal.close();
-            htmlToImage.toJpeg(document.getElementById('preview').firstChild, {
-                quality: 0.05,
-            }).then(dataUrl => {
-                preview.style.display = "none";
-                this.properties.preview = dataUrl;
-                fs.storeBlock(this.properties, clb, clbErr); //!reload blocks
-            }).catch(err => {
-                console.error("Error saving preview ", err); //!
-            });
+        return right;
+    }
+
+    saveBlock(e) {
+        const clb = (res) => {
+            console.log("Block saved...", res);
+        }
+        const clbErr = (err) => {
+            console.error(err);
+        }
+        const fs = editor.StorageManager.get('flow-storage');
+        console.log("Procesing block " + this.ccid + "...");
+        const preview = document.getElementById('preview');
+        preview.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
+            this.cssCodeEditor.editor.getValue() + '</style>';
+        preview.style.display = "block";
+        this.editor.Modal.close();
+        htmlToImage.toJpeg(document.getElementById('preview').firstChild, {
+            quality: 0.05,
+        }).then(dataUrl => {
+            preview.style.display = "none";
+            this.properties.preview = dataUrl;
+            fs.storeBlock(this.properties, clb, clbErr); //!reload blocks
+        }).catch(err => {
+            console.error("Error saving preview ", err); //!
         });
-        cont.appendChild(left);
-        cont.appendChild(right);
-        cont.appendChild(b);
-        return cont;
     }
 
     /**

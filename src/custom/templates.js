@@ -1,7 +1,8 @@
 import {
     customBlocksTab,
     marketBlocksTab,
-    extraBlocksTab
+    extraBlocksTab,
+    pfx
 } from './../consts';
 
 class Templates {
@@ -12,7 +13,7 @@ class Templates {
             this.templates = res;
             this.buildFromBlockManager(res);
             this.migrate();
-            console.log("Blocks loaded...");
+            console.log("Blocks loaded...", res);
         }
         const clbErr = (err) => {
             console.error(err);
@@ -53,9 +54,9 @@ class Templates {
             //todo customize labels if preview avalable and place decriptions
             bm.add(templates.name + '-' + templates[template].id, {
                 label: `
-                <div class="gjs-four-color-h gjs-thumb">
+                <div class="${pfx}four-color-h gjs-thumb">
                 <img alt=${templates[template].description} src=${templates[template].preview} >
-                <div class="gjs-block-label">${templates[template].name}</div>
+                <div class="${pfx}block-label">${templates[template].name}</div>
                 </div>
                 `,
                 content: templates[template].html + '<style>' + templates[template].css + '</style>',

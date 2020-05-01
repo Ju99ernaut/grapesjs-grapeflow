@@ -1,3 +1,65 @@
+const properties = [{
+        name: 'name',
+        label: 'Name <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. title',
+        radio: false
+    },
+    {
+        name: 'description',
+        label: 'Description <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. description',
+        radio: false
+    },
+    {
+        name: 'preview',
+        label: 'Preview <i class="fa fa-link"></i>',
+        placeholder: 'eg. http://example.com',
+        radio: false
+    },
+    {
+        name: 'multipage',
+        label: 'Multipage <i class="fa fa-question-circle"></i>',
+        placeholder: 'eg. True',
+        radio: true
+    },
+    {
+        name: 'customDomain',
+        label: 'Custom Domain <i class="fa fa-question-circle"></i>',
+        placeholder: 'eg. True',
+        radio: true
+    },
+    {
+        name: 'customDomainUrl',
+        label: 'Custom Domain Url <i class="fa fa-link"></i>',
+        placeholder: 'eg. http://example.com',
+        radio: false
+    },
+    {
+        name: 'domain',
+        label: 'Domain Name <i class="fa fa-info-circle"></i>',
+        placeholder: 'eg. domain',
+        radio: false
+    },
+    {
+        name: 'public',
+        label: 'Public <i class="fa fa-question-circle"></i>',
+        placeholder: 'eg. True',
+        radio: true
+    },
+    {
+        name: 'market',
+        label: 'Market <i class="fa fa-question-circle"></i>',
+        placeholder: 'eg. True',
+        radio: true
+    },
+    {
+        name: 'branding',
+        label: 'Branding <i class="fa fa-question-circle"></i>',
+        placeholder: 'eg. True',
+        radio: true
+    },
+];
+
 class Settings {
     constructor() {
         const fs = editor.StorageManager.get('flow-storage');
@@ -36,67 +98,6 @@ class Settings {
 
     buildSettings() {
         let cont = document.createElement('div');
-        const properties = [{
-                name: 'name',
-                label: 'Name <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. title',
-                radio: false
-            },
-            {
-                name: 'description',
-                label: 'Description <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. description',
-                radio: false
-            },
-            {
-                name: 'preview',
-                label: 'Preview <i class="fa fa-link"></i>',
-                placeholder: 'eg. http://example.com',
-                radio: false
-            },
-            {
-                name: 'multipage',
-                label: 'Multipage <i class="fa fa-question-circle"></i>',
-                placeholder: 'eg. True',
-                radio: true
-            },
-            {
-                name: 'customDomain',
-                label: 'Custom Domain <i class="fa fa-question-circle"></i>',
-                placeholder: 'eg. True',
-                radio: true
-            },
-            {
-                name: 'customDomainUrl',
-                label: 'Custom Domain Url <i class="fa fa-link"></i>',
-                placeholder: 'eg. http://example.com',
-                radio: false
-            },
-            {
-                name: 'domain',
-                label: 'Domain Name <i class="fa fa-info-circle"></i>',
-                placeholder: 'eg. domain',
-                radio: false
-            },
-            {
-                name: 'public',
-                label: 'Public <i class="fa fa-question-circle"></i>',
-                placeholder: 'eg. True',
-                radio: true
-            },
-            {
-                name: 'market',
-                label: 'Market <i class="fa fa-question-circle"></i>',
-                placeholder: 'eg. True',
-                radio: true
-            },
-            {
-                name: 'branding',
-                label: 'Branding <i class="fa fa-question-circle"></i>',
-                placeholder: 'eg. True',
-                radio: true
-            },
-        ];
         for (let prop in properties) {
             const iField = document.createElement('div');
             iField.className += "gjs-field";
@@ -118,46 +119,54 @@ class Settings {
                 i.className += "gjs-chk-icon";
             } else
                 input.value = this.settings[properties[prop].name];
-            input.addEventListener('change', e => {
-                let regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
-                let regUrl = new RegExp(regexQuery, "i");
-                //!regex not working
-                if (e.target.value !== "" && e.target.type !== "checkbox") {
-                    if (e.target.value.match(regUrl) !== null)
-                        this.settings[e.target.name] = e.target.value;
-                    else if (e.target.name != "preview" && e.target.name != "customDomainUrl")
-                        this.settings[e.target.name] = e.target.value;
-                    else {
-                        console.warn("Invalid url");
-                        e.target.value = "";
-                    }
-                } else
-                    this.settings[e.target.name] = e.target.checked;
-            });
+            input.addEventListener('change', e => this.checkUrl(e));
 
             iField.appendChild(input);
             iField.appendChild(i);
             cont.appendChild(label);
             cont.appendChild(iField);
         }
-        let b = document.createElement('button');
+        cont.appendChild(this.saveButton());
+        document.getElementById('settings').appendChild(cont);
+    }
+
+    saveButton() {
+        const b = document.createElement('button');
         b.id = "save-settings";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Settings';
         b.style.margin = "10px 5px 10px 5px";
         b.className += "gjs-btn-prim";
-        b.addEventListener('click', (e) => {
-            const clb = (res) => {
-                console.log("Settings updated...")
+        b.addEventListener('click', (e) => this.saveSettings(e));
+        return b
+    }
+
+    saveSettings(e) {
+        const clb = (res) => {
+            console.log("Settings updated...", res);
+        }
+        const clbErr = (err) => {
+            console.error(err);
+        }
+        const fs = editor.StorageManager.get('flow-storage');
+        //todo modify request, and ensure it is called if there are changes
+        fs.storeProject(this.settings, clb, clbErr);
+    }
+
+    checkUrl(e) {
+        let regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
+        let regUrl = new RegExp(regexQuery, "i");
+        //!regex not working
+        if (e.target.value !== "" && e.target.type !== "checkbox") {
+            if (e.target.value.match(regUrl) !== null)
+                this.settings[e.target.name] = e.target.value;
+            else if (e.target.name != "preview" && e.target.name != "customDomainUrl")
+                this.settings[e.target.name] = e.target.value;
+            else {
+                console.warn("Invalid url");
+                e.target.value = "";
             }
-            const clbErr = (err) => {
-                console.error(err);
-            }
-            const fs = editor.StorageManager.get('flow-storage');
-            //todo modify request, and ensure it is called if there are changes
-            fs.storeProject(this.settings, clb, clbErr);
-        });
-        cont.appendChild(b);
-        document.getElementById('settings').appendChild(cont);
+        } else
+            this.settings[e.target.name] = e.target.checked;
     }
 }
 

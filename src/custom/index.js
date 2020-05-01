@@ -12,8 +12,11 @@ import {
     localTab,
     libraryTab,
     customBlocksTab,
-    marketBlocksTab
+    marketBlocksTab,
+    pfx
 } from './../consts';
+
+const $ = document.getElementById.bind(document);
 
 class CustomMenu {
     constructor() {
@@ -34,10 +37,10 @@ class CustomMenu {
 
     buildCustomMenu() {
         const cMenu = document.createElement('div');
-        //Add hover target
-        //Add left bar
-        //Add menus
-        //Append to container
+        //*Add hover target
+        //*Add left bar
+        //*Add menus
+        //*Append to container
         cMenu.appendChild(this.buildTabMenu("blocks", "Add", [basicBlocksTab, bs4BlocksTab, extraBlocksTab], true));
         cMenu.appendChild(this.buildSimpleMenu("layers", "Layout"));
         cMenu.appendChild(this.buildTabMenu("pages", "Pages", [pageTab, propertiesTab]));
@@ -91,9 +94,9 @@ class CustomMenu {
         const item = document.createElement('span');
         if (id !== "") {
             item.id = id;
-            item.className += "gjs-pn-btn fa " + icon;
+            item.className += pfx + "pn-btn " + "fa " + icon;
         } else
-            item.className += "left-menu-icons gjs-pn-btn fa " + icon;
+            item.className += "left-menu-icons " + pfx + "pn-btn fa " + icon;
         item.title = title;
         item.addEventListener('click', click);
         return item;
@@ -121,7 +124,7 @@ class CustomMenu {
         p.appendChild(x);
         div.appendChild(p);
         if (search)
-            div.appendChild(this.buildSearch());
+            div.appendChild(this.buildSearch(id + "search"));
         cont.appendChild(div);
         return cont;
     }
@@ -148,65 +151,53 @@ class CustomMenu {
         const _cont = document.createElement('div');
         _cont.style.width = "100%";
         _cont.style.float = "left";
-        const div = document.createElement('div');
-        const cont = document.createElement('div');
-        cont.className += "gjs-fields";
-        const cont1 = document.createElement('div');
-        cont1.className += "gjs-field gjs-field-radio";
-        const cont2 = document.createElement('div');
-        cont2.className += "gjs-radio-items";
+        let pre = `
+            <div class="${pfx}fields">
+                <div class="${pfx}field ${pfx}field-radio">
+                    <div class="${pfx}radio-items">`;
+        const post = `
+                    </div>
+                </div>
+            </div>`;
+
+        let openDiv = `<div>`;
+        const closeDiv = `</div>`;
         for (let i = 0; i < tabs.length; i++) {
-            const tabItemC = document.createElement('div');
-            tabItemC.className += "gjs-radio-item";
-            const tab = document.createElement('div');
-            tab.id = tabs[i].id + "-tab";
-            tab.style.marginTop = "10px";
-            div.appendChild(tab);
-            const input = document.createElement('input');
-            input.type = "radio";
-            input.id = tabs[i].id;
-            input.value = tabs[i].id;
-            input.name = tabs[i].name;
-            input.className += "gjs-sm-radio";
-            const label = document.createElement('label');
-            label.className += "gjs-radio-item-label";
-            label.htmlFor = tabs[i].id;
-            label.innerHTML = tabs[i].labelText;
-            tabItemC.appendChild(input);
-            tabItemC.appendChild(label);
-            cont2.appendChild(tabItemC);
+            const tabButtons = `
+                <div class="${pfx}radio-item">
+                    <input type="radio" id=${tabs[i].id} value=${tabs[i].id} name=${tabs[i].name} class="${pfx}sm-radio">
+                        <label class="${pfx}radio-item-label" for=${tabs[i].id}>${tabs[i].labelText}</label>
+                </div>`;
+            pre += tabButtons;
+            const tab = `<div id="${tabs[i].id}-tab" style="margin-top: 10px;"></div>`;
+            openDiv += tab;
         }
-        cont1.appendChild(cont2);
-        cont.appendChild(cont1);
-        _cont.appendChild(cont);
-        _cont.appendChild(div);
+        pre += post;
+        openDiv += closeDiv;
+        _cont.innerHTML = pre + openDiv;
         return _cont;
     }
 
-    buildSearch() {
+    /**
+     * Search bar
+     * @param {String} id to identify the input field
+     */
+    buildSearch(id) {
         const cont = document.createElement('div');
         cont.style.justifyContent = "center";
-        const icon = document.createElement('span');
-        icon.style.float = "left";
-        icon.style.margin = "5px 5px 5px 5px";
-        icon.innerHTML = '<i class="fa fa-search"></i>';
-        const span = document.createElement('span');
-        span.style.float = "left";
-        span.style.width = "88%"
-        const iField = document.createElement('div');
-        iField.className += "gjs-field";
-        iField.style.margin = "0px 5px 5px 0px";
-        const input = document.createElement('input');
-        input.placeholder = "Filter by name...";
-        input.name = "search";
-        input.addEventListener('change', e => {
-            console.log("Searching");
-        });
-
-        cont.appendChild(icon);
-        iField.appendChild(input);
-        span.appendChild(iField);
-        cont.appendChild(span);
+        cont.innerHTML = `
+            <span style="float: left; margin: 5px;">
+                <i class="fa fa-search"></i>
+            </span>
+            <span style="float: left; width: 88%;">
+                <div class="${pfx}field" style="margin: 0px 5px 5px 0px;">
+                    <input id=${id} placeholder="Filter by name..." name="search">
+                </div>
+            </span>
+            `
+        //$(id).addEventListener('change', e => {
+        //    console.log("Searching");
+        //});
 
         return cont
     }
@@ -215,24 +206,24 @@ class CustomMenu {
         let mode = (evt.currentTarget.id == 'left-menu-trans') ? 'translate' : 'absolute';
         if (mode == 'absolute' && !this.abSet) {
             editor.getModel().set('dmode', mode);
-            document.getElementById('left-menu-abs').className += "gjs-pn-active";
+            document.getElementById('left-menu-abs').className += pfx + "pn-active";
             document.getElementById('left-menu-trans').className = document.getElementById('left-menu-trans').className
-                .replace("gjs-pn-active", "");
+                .replace(pfx + "pn-active", "");
             this.abSet = !this.abSet;
             console.warn("More design freedom at the cost of responsiveness");
         } else if (mode == 'translate' && !this.trnSet) {
             editor.getModel().set('dmode', mode);
-            document.getElementById('left-menu-trans').className += "gjs-pn-active";
+            document.getElementById('left-menu-trans').className += pfx + "pn-active";
             document.getElementById('left-menu-abs').className = document.getElementById('left-menu-abs').className
-                .replace("gjs-pn-active", "");
+                .replace(pfx + "pn-active", "");
             this.trnSet = !this.trnSet;
             console.warn("You may have to cycle all device modes and fix alignment issues");
         } else {
             editor.getModel().set('dmode', 'default');
             document.getElementById('left-menu-abs').className = document.getElementById('left-menu-abs').className
-                .replace("gjs-pn-active", "");
+                .replace(pfx + "pn-active", "");
             document.getElementById('left-menu-trans').className = document.getElementById('left-menu-trans').className
-                .replace("gjs-pn-active", "");
+                .replace(pfx + "pn-active", "");
             this.abSet = false;
             this.trnSet = false;
             console.log("Default drag mode set");
@@ -241,17 +232,17 @@ class CustomMenu {
 
     activate(evt) {
         this.deactivateAll();
-        evt.currentTarget.className += "gjs-pn-active";
+        evt.currentTarget.className += pfx + "pn-active";
     }
 
     deactivate(evt) {
-        evt.currentTarget.className = evt.currentTarget.className.replace("gjs-pn-active", "");
+        evt.currentTarget.className = evt.currentTarget.className.replace(pfx + "pn-active", "");
     }
 
     deactivateAll() {
         const menuBtns = document.getElementsByClassName('left-menu-icons');
         for (var i = 0; i < menuBtns.length; i++) {
-            menuBtns[i].className = menuBtns[i].className.replace("gjs-pn-active", "");
+            menuBtns[i].className = menuBtns[i].className.replace(pfx + "pn-active", "");
         }
     }
 
