@@ -4,8 +4,7 @@ import {
     pageTab,
     propertiesTab,
     pfx,
-    loader,
-    cmdClear
+    loader
 } from './../consts';
 
 const $ = document.getElementById.bind(document);
@@ -338,13 +337,11 @@ class Manager {
 
     buildCreateInput() {
         const iField = document.createElement('div');
-        iField.className += pfx + "field";
-        iField.style.margin = "10px 5px 10px 5px";
+        iField.className += pfx + "field left-menu-input";
         const label = document.createElement('div');
         label.innerHTML = 'Add Page <i class="fa fa-plus-square"></i>';
-        label.style.marginLeft = "8px";
-        label.style.fontSize = "14px";
-        //todo use modal to give options for new page creation
+        label.className += "left-menu-label";
+        //? use modal to give options for new page creation
         const input = document.createElement('input');
         input.placeholder = "Enter page name then unfocus";
         input.addEventListener('change', (e) => {
@@ -490,12 +487,10 @@ class Manager {
         const cont = document.createElement('div');
         for (let prop in properties) {
             const iField = document.createElement('div');
-            iField.className += pfx + "field";
-            iField.style.margin = "5px 5px 10px 5px";
+            iField.className += pfx + "field left-menu-input";
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
-            label.style.marginLeft = "8px";
-            label.style.fontSize = "14px";
+            label.className += "left-menu-label";
             const input = properties[prop].name == 'metaDesc' ? document.createElement('textarea') : document.createElement('input');
             input.placeholder = properties[prop].placeholder;
             input.name = properties[prop].name;
@@ -514,8 +509,7 @@ class Manager {
         const b = document.createElement('button');
         b.id = "save-properties";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Properties';
-        b.style.margin = "10px 5px 10px 5px";
-        b.className += pfx + "btn-prim";
+        b.className += pfx + "btn-prim left-menu-input";
         //todo ensure request is called if there are changes
         b.addEventListener('click', (e) => this.updateProperties(e));
         return b;

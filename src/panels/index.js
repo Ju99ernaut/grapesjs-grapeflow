@@ -42,54 +42,54 @@ export default (editor, config) => {
       id: prv,
       context: prv,
       command: e => e.runCommand(prv),
-      className: 'fa fa-eye',
+      className: 'font-blue fa fa-eye',
     }, {
       id: ful,
       command: ful,
       context: ful,
-      className: 'fa fa-arrows-alt',
+      className: 'font-blue fa fa-arrows-alt',
     }, {
       id: expt,
-      className: 'fa fa-code',
+      className: 'font-blue fa fa-code',
       command: e => e.runCommand(expt),
     }, {
       id: 'undo',
-      className: 'fa fa-undo',
+      className: 'font-aqua fa fa-undo',
       attributes: {
         title: 'undo',
       },
       command: e => e.runCommand('core:undo'),
     }, {
       id: 'redo',
-      className: 'fa fa-repeat',
+      className: 'font-aqua fa fa-repeat',
       attributes: {
         title: 'redo',
       },
       command: e => e.runCommand('core:redo'),
     }, {
       id: cmdImport,
-      className: 'fa fa-download',
+      className: 'font-pale-green fa fa-download',
       attributes: {
         title: 'import',
       },
       command: e => e.runCommand(cmdImport),
     }, {
       id: cmdClear,
-      className: 'fa fa-trash',
+      className: 'font-red fa fa-trash-o',
       attributes: {
         title: 'clear',
       },
       command: e => e.runCommand(cmdClear),
     }, {
       id: cmdSave,
-      className: 'fa fa-cloud-upload',
+      className: 'font-green fa fa-floppy-o',
       attributes: {
         title: 'save',
       },
       command: e => e.runCommand(cmdSave),
     }, {
       id: cmdLaunch,
-      className: 'fa fa-rocket',
+      className: 'font-orange fa fa-paper-plane-o',
       attributes: {
         title: 'launch',
       },

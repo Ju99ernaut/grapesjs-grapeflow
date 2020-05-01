@@ -100,20 +100,17 @@ class Settings {
         let cont = document.createElement('div');
         for (let prop in properties) {
             const iField = document.createElement('div');
-            iField.className += "gjs-field";
-            iField.style.margin = "5px 5px 10px 5px";
+            iField.className += "gjs-field left-menu-input";
             const i = document.createElement('i');
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
-            label.style.marginLeft = "8px";
-            label.style.fontSize = "14px";
+            label.className += "left-menu-label";
             const input = properties[prop].name == 'description' ? document.createElement('textarea') : document.createElement('input');
             input.placeholder = properties[prop].placeholder;
             input.name = properties[prop].name;
             if (properties[prop].radio) {
                 iField = document.createElement('label');
-                iField.className += "gjs-field gjs-field-checkbox";
-                iField.style.margin = "5px 5px 10px 10px";
+                iField.className += "gjs-field gjs-field-checkbox left-menu-input";
                 input.type = "checkbox";
                 input.checked = this.settings[properties[prop].name];
                 i.className += "gjs-chk-icon";
@@ -134,8 +131,7 @@ class Settings {
         const b = document.createElement('button');
         b.id = "save-settings";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Settings';
-        b.style.margin = "10px 5px 10px 5px";
-        b.className += "gjs-btn-prim";
+        b.className += "gjs-btn-prim left-menu-input";
         b.addEventListener('click', (e) => this.saveSettings(e));
         return b
     }

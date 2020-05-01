@@ -261,12 +261,10 @@ class CodeEditor {
         for (let prop in properties) {
             const div = document.createElement('div');
             const iField = document.createElement('div');
-            iField.className += properties[prop].name == "category" ? "gjs-field gjs-field-select" : "gjs-field";
-            iField.style.margin = "5px 5px 10px 5px";
+            iField.className += properties[prop].name == "category" ? "gjs-field gjs-field-select save-modal-input" : "gjs-field save-modal-input";
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
-            label.style.marginLeft = "8px";
-            label.style.fontSize = "16px";
+            label.className += "save-modal-label";
             const input = document.createElement('input');
             if (properties[prop].name == 'description') {
                 input = document.createElement('textarea');
@@ -303,9 +301,7 @@ class CodeEditor {
         const b = document.createElement('button');
         b.id = "save-template";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Template';
-        b.style.margin = "10px 5px 0px 5px";
-        b.style.float = "right";
-        b.className += "gjs-btn-prim";
+        b.className += "gjs-btn-prim save-modal-btn";
         //todo ensure request is called if there are changes
         b.addEventListener('click', (e) => this.saveBlock(e));
         return b
@@ -315,14 +311,10 @@ class CodeEditor {
         const right = document.createElement('div');
         right.className += "gjs-cm-editor-c";
         const iField = document.createElement('div');
-        iField.className += "gjs-field";
-        iField.style.margin = "5px 5px 10px 5px";
-        iField.style.height = "450px";
-        iField.style.overflowY = "scroll";
+        iField.className += "gjs-field save-modal-preview";
         const label = document.createElement('div');
         label.innerHTML = 'Snapshot <i class="fa fa-camera"></i>';
-        label.style.marginLeft = "8px";
-        label.style.fontSize = "16px";
+        label.className += "save-modal-label";
         iField.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
             this.cssCodeEditor.editor.getValue() + '</style>';
         right.appendChild(label);

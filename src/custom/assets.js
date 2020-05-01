@@ -98,7 +98,7 @@ class Assets {
         cont.className += pfx + "am-asset " + pfx + "am-asset-image";
         const image = `
             <div class="left ${pfx}am-preview-cont">
-                <img alt=${name} src=${url} style="width: 100%; height: 100%; object-fit: contain; background-color: rgba(53, 43, 56, 0.808);">
+                <img alt=${name} src=${url} class="asset-menu-image">
             </div>
             <div class="left ${pfx}am-meta">
                 <div class="${pfx}am-name" title=${name}>${name}</div>
