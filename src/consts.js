@@ -8,6 +8,7 @@ export const
   cmdEdit = 'code-editor',
   cmdSave = 'save-page',
   pfx = 'gjs-',
+  $ = document.getElementById.bind(document),
   loader = `<style>
   body {
     background-color: #2f2a36;

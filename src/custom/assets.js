@@ -1,7 +1,8 @@
 import {
     localTab,
     libraryTab,
-    pfx
+    pfx,
+    $
 } from './../consts';
 
 class Assets {
@@ -75,6 +76,9 @@ class Assets {
             console.error("Failed to upload...", err);
             //console.error(err);
         });
+        $("assets-search").addEventListener('change', e => {
+            console.log("Searching assets");
+        });
     }
 
     assetTabs() {
@@ -125,6 +129,10 @@ class Assets {
             cont.appendChild(this.buildAsset(url, name, dim));
         }
         return cont;
+    }
+
+    filterAssets(e) {
+        console.log(e);
     }
 
     buildLibrary() {

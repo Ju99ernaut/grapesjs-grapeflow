@@ -4,13 +4,13 @@ import {
     pageTab,
     propertiesTab,
     pfx,
-    loader
+    loader,
+    $
 } from './../consts';
 
-const $ = document.getElementById.bind(document);
 const properties = [{
         name: 'name',
-        label: 'Name <i class="fa fa-info-circle"></i>',
+        label: 'Name <i class="fa fa-info"></i>',
         placeholder: 'eg. name'
     },
     {
@@ -30,17 +30,17 @@ const properties = [{
     },
     {
         name: 'metaTitle',
-        label: 'Meta Title <i class="fa fa-info-circle"></i>',
+        label: 'Meta Title <i class="fa fa-info"></i>',
         placeholder: 'eg. title'
     },
     {
         name: 'metaDesc',
-        label: 'Meta Description <i class="fa fa-info-circle"></i>',
+        label: 'Meta Description <i class="fa fa-info"></i>',
         placeholder: 'eg. description'
     },
     {
         name: 'slug',
-        label: 'Slug <i class="fa fa-info-circle"></i>',
+        label: 'Slug <i class="fa fa-info"></i>',
         placeholder: 'eg. slug'
     },
 ];
@@ -339,7 +339,7 @@ class Manager {
         const iField = document.createElement('div');
         iField.className += pfx + "field left-menu-input";
         const label = document.createElement('div');
-        label.innerHTML = 'Add Page <i class="fa fa-plus-square"></i>';
+        label.innerHTML = 'Add Page <i class="fa fa-plus-square-o"></i>';
         label.className += "left-menu-label";
         //? use modal to give options for new page creation
         const input = document.createElement('input');

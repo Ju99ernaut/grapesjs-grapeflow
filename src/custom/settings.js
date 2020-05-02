@@ -1,12 +1,12 @@
 const properties = [{
         name: 'name',
-        label: 'Name <i class="fa fa-info-circle"></i>',
+        label: 'Name <i class="fa fa-info"></i>',
         placeholder: 'eg. title',
         radio: false
     },
     {
         name: 'description',
-        label: 'Description <i class="fa fa-info-circle"></i>',
+        label: 'Description <i class="fa fa-info"></i>',
         placeholder: 'eg. description',
         radio: false
     },
@@ -18,13 +18,13 @@ const properties = [{
     },
     {
         name: 'multipage',
-        label: 'Multipage <i class="fa fa-question-circle"></i>',
+        label: 'Multipage <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
         radio: true
     },
     {
         name: 'customDomain',
-        label: 'Custom Domain <i class="fa fa-question-circle"></i>',
+        label: 'Custom Domain <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
         radio: true
     },
@@ -36,25 +36,25 @@ const properties = [{
     },
     {
         name: 'domain',
-        label: 'Domain Name <i class="fa fa-info-circle"></i>',
+        label: 'Domain Name <i class="fa fa-info"></i>',
         placeholder: 'eg. domain',
         radio: false
     },
     {
         name: 'public',
-        label: 'Public <i class="fa fa-question-circle"></i>',
+        label: 'Public <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
         radio: true
     },
     {
         name: 'market',
-        label: 'Market <i class="fa fa-question-circle"></i>',
+        label: 'Market <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
         radio: true
     },
     {
         name: 'branding',
-        label: 'Branding <i class="fa fa-question-circle"></i>',
+        label: 'Branding <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
         radio: true
     },

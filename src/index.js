@@ -391,9 +391,9 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
   editor.on('storage:error:load', function (e) {
     console.log('Loading error ', e)
   });
-  editor.on('storage:store', function (e) {
-    console.log('Stored ', e)
-  });
+  //editor.on('storage:store', function (e) {
+  //  console.log(e)
+  //});
   editor.on('storage:error:store', function (e) {
     console.error('Storage error ', e)
   });

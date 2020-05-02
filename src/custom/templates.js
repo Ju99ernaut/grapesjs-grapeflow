@@ -2,7 +2,8 @@ import {
     customBlocksTab,
     marketBlocksTab,
     extraBlocksTab,
-    pfx
+    pfx,
+    $
 } from './../consts';
 
 class Templates {
@@ -66,9 +67,19 @@ class Templates {
             });
             this.categories.push(templates[template].category);
         }
-        //const custom = all.filter(block => categories.includes(block.attributes.category.id));
+        $("blocks-search").addEventListener('change', e => {
+            console.log("Searching blocks");
+            this.filterBlocks(e);
+        });
     }
 
+    filterBlocks(e) {
+        const bm = editor.BlockManager
+        const all = bm.getAll();
+        //const filter = all.filter(block => categories.includes(block.attributes.id));
+        const filter = all.filter(block => block.attributes.id == e.target.value);
+        bm.render(filter);
+    }
 
     migrate() {
         const layersC = document.getElementById('layers-c');

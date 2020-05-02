@@ -2,11 +2,11 @@ import Split from 'split.js';
 import htmlToImage from 'html-to-image';
 import {
     propertiesTab,
-    pfx
+    pfx,
+    $
 } from '../consts';
 //import html2canvas from '@trainiac/html2canvas';
 
-const $ = document.getElementById.bind(document);
 
 const properties = [{
         name: 'category', //todo make dropdown

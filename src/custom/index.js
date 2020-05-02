@@ -13,10 +13,9 @@ import {
     libraryTab,
     customBlocksTab,
     marketBlocksTab,
-    pfx
+    pfx,
+    $
 } from './../consts';
-
-const $ = document.getElementById.bind(document);
 
 class CustomMenu {
     constructor() {
@@ -124,7 +123,7 @@ class CustomMenu {
         p.appendChild(x);
         div.appendChild(p);
         if (search)
-            div.appendChild(this.buildSearch(id + "search"));
+            div.appendChild(this.buildSearch(id + "-search"));
         cont.appendChild(div);
         return cont;
     }
@@ -195,10 +194,6 @@ class CustomMenu {
                 </div>
             </span>
             `
-        //$(id).addEventListener('change', e => {
-        //    console.log("Searching");
-        //});
-
         return cont
     }
 
