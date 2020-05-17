@@ -512,15 +512,15 @@ html {
       }
 
       &:hover {
-        background-color: $secondaryColor;
+        background-color: $classColor;
 
         &:before {
-          border-color: $secondaryColor;
+          border-color: $classColor;
           border-left-color: transparent;
         }
 
         &:after {
-          border-left-color: $secondaryColor;
+          border-left-color: $classColor;
         }
       }
 

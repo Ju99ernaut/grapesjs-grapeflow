@@ -47,11 +47,6 @@ const properties = [{
 
 class Manager {
     constructor(projects) {
-        //TODO SET PROJECT URL DYNAMICALLY;
-        this.urlLoadProject = editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadProjects
-        this.urlStoreProject = editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStoreProjects
-        editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadProjects = this.urlLoadProject + "38791566-b8c1-449a-aae4-9870df8d3d24"
-        editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStoreProjects = this.urlStoreProject + "38791566-b8c1-449a-aae4-9870df8d3d24/"
         this.urlLoad = editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages;
         this.urlStore = editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages;
         const fs = editor.StorageManager.get('flow-storage');
@@ -270,6 +265,10 @@ class Manager {
         document.getElementById(propertiesTab.id).addEventListener('click', () => this.pageTabs());
         //?way to map newly added components
         editor.on('block:drag:stop', () => this.layerIconMap());
+        editor.on('component:drag:end', () => this.layerIconMap());
+        editor.on('component:add', () => this.layerIconMap());
+        editor.on('undo', () => this.layerIconMap());
+        editor.on('redo', () => this.layerIconMap());
         //editor.on('component:clone', () => layerIconMap());
     }
 

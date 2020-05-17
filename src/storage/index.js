@@ -87,7 +87,7 @@ export default (editor, config) => {
                 FlowStorage[key] = data[key];
             }
 
-            rs.request(config.urlLoadProjects + "/", {
+            rs.request(config.urlLoadProjects, {
                 body: FlowStorage
             }, clb, clbErr);
         },
