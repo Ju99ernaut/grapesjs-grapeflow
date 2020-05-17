@@ -29,6 +29,7 @@ import styles from './styles';
 import storage from './storage';
 import en from './locale/en';
 import CustomMenu from './custom/index';
+import breadcrumbs from './tools/breadcrumbs';
 
 export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) => {
   let config = opts;
@@ -149,7 +150,9 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
 
     // `grapesjs-blocks-basic` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    blocksBasicOpts: {},
+    blocksBasicOpts: {
+      flexGrid: true
+    },
 
     // `grapesjs-navbar` plugin options
     // By setting this option to `false` will avoid loading the plugin
@@ -169,10 +172,30 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
 
     // `grapesjs-plugin-export` plugin options
     // By setting this option to `false` will avoid loading the plugin
+    // Set root: --- ie directory structure
     exportOpts: {
       btnLabel: '<i class="fa fa-link-cloud-upload"></i>Export to ZIP',
       filenamePfx: 'grapeflow_template',
       filename: null, //todo function for generating file names eg. editor => 'file.zip'
+      root: {
+        css: {
+          'style.css': ed => ed.getCss(),
+        },
+        'index.html': ed =>
+          `<!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
+              <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+              <link rel="stylesheet" href="./css/style.css">
+            </head>
+            <body>${ed.getHtml()}</body>
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+          </html>`,
+      },
     },
 
     // `grapesjs-tabs` plugin options
@@ -256,6 +279,8 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     // `grapesjs-plugin-filestack` plugin options, disabled by default
     // Filestack library should be included manually
     // By setting this option to `false` will avoid loading the plugin
+    // Reset to true if user provides API key
+    //{ key: $key, btnEl: el, btnText: Filestack }
     filestackOpts: 0,
 
     // `grapesjs-plugin-ckeditor` plugin options, disabled by default
@@ -365,6 +390,9 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     en,
     ...options.i18n,
   });
+
+  //Load breadcrumbs
+  breadcrumbs(editor, config);
 
   //Load Custom Menu
   editor.on('load', () => {

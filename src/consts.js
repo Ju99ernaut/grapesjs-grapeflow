@@ -154,4 +154,293 @@ export const
     id: "market",
     name: "templates",
     labelText: "Market",
-  };
+  },
+  animations = [{
+      value: 'bounce'
+    },
+    {
+      value: 'flash'
+    },
+    {
+      value: 'pulse'
+    },
+    {
+      value: 'rubberBand'
+    },
+    {
+      value: 'shakeX'
+    },
+    {
+      value: 'shakeY'
+    },
+    {
+      value: 'headShake'
+    },
+    {
+      value: 'swing'
+    },
+    {
+      value: 'tada'
+    },
+    {
+      value: 'wobble'
+    },
+    {
+      value: 'jello'
+    },
+    {
+      value: 'heartBeat'
+    },
+    {
+      value: 'backInDown'
+    },
+    {
+      value: 'backInLeft'
+    },
+    {
+      value: 'backInRight'
+    },
+    {
+      value: 'backInUp'
+    },
+    {
+      value: 'backOutDown'
+    },
+    {
+      value: 'backOutLeft'
+    },
+    {
+      value: 'backOutRight'
+    },
+    {
+      value: 'bounceIn'
+    },
+    {
+      value: 'bounceInDown'
+    },
+    {
+      value: 'bounceInLeft'
+    },
+    {
+      value: 'bounceInRight'
+    },
+    {
+      value: 'bounceInUp'
+    },
+    {
+      value: 'bounceOut'
+    },
+    {
+      value: 'bounceOutDown'
+    },
+    {
+      value: 'bounceOutLeft'
+    },
+    {
+      value: 'bounceOutRight'
+    },
+    {
+      value: 'bounceOutUp'
+    },
+    {
+      value: 'fadeIn'
+    },
+    {
+      value: 'fadeInDown'
+    },
+    {
+      value: 'fadeInDownBig'
+    },
+    {
+      value: 'fadeInLeft'
+    },
+    {
+      value: 'fadeInLeftBig'
+    },
+    {
+      value: 'fadeInRight'
+    },
+    {
+      value: 'fadeInRightBig'
+    },
+    {
+      value: 'fadeInUp'
+    },
+    {
+      value: 'fadeInUpBig'
+    },
+    {
+      value: 'fadeInTopLeft'
+    },
+    {
+      value: 'fadeInTopRight'
+    },
+    {
+      value: 'fadeInBottomLeft'
+    },
+    {
+      value: 'fadeInBottomRight'
+    },
+    {
+      value: 'fadeOut'
+    },
+    {
+      value: 'fadeOutDown'
+    },
+    {
+      value: 'fadeOutDownBig'
+    },
+    {
+      value: 'fadeOutLeft'
+    },
+    {
+      value: 'fadeOutLeftBig'
+    },
+    {
+      value: 'fadeOutRight'
+    },
+    {
+      value: 'fadeOutRightBig'
+    },
+    {
+      value: 'fadeOutUp'
+    },
+    {
+      value: 'fadeOutUpBig'
+    },
+    {
+      value: 'fadeOutTopLeft'
+    },
+    {
+      value: 'fadeOutTopRight'
+    },
+    {
+      value: 'fadeOutBottomLeft'
+    },
+    {
+      value: 'fadeOutBottomRight'
+    },
+    {
+      value: 'flip'
+    },
+    {
+      value: 'flipInX'
+    },
+    {
+      value: 'flipInY'
+    },
+    {
+      value: 'flipOutX'
+    },
+    {
+      value: 'flipOutY'
+    },
+    {
+      value: 'lightSpeedInRight'
+    },
+    {
+      value: 'lightSpeedInLeft'
+    },
+    {
+      value: 'lightSpeedOutRight'
+    },
+    {
+      value: 'lightSpeedOutLeft'
+    },
+    {
+      value: 'rotateIn'
+    },
+    {
+      value: 'rotateInDownLeft'
+    },
+    {
+      value: 'rotateInDownRight'
+    },
+    {
+      value: 'rotateInUpLeft'
+    },
+    {
+      value: 'rotateInUpRight'
+    },
+    {
+      value: 'rotateOut'
+    },
+    {
+      value: 'rotateOutDownLeft'
+    },
+    {
+      value: 'rotateOutDownRight'
+    },
+    {
+      value: 'rotateOutUpLeft'
+    },
+    {
+      value: 'rotateOutUpRight'
+    },
+    {
+      value: 'hinge'
+    },
+    {
+      value: 'jacInTheBox'
+    },
+    {
+      value: 'rollIn'
+    },
+    {
+      value: 'rollOut'
+    },
+    {
+      value: 'zoomIn'
+    },
+    {
+      value: 'zoomInDown'
+    },
+    {
+      value: 'zoomInLeft'
+    },
+    {
+      value: 'zoomInRight'
+    },
+    {
+      value: 'zoomInUp'
+    },
+    {
+      value: 'zoomOut'
+    },
+    {
+      value: 'zoomOutDown'
+    },
+    {
+      value: 'zoomOutLeft'
+    },
+    {
+      value: 'zoomOutRight'
+    },
+    {
+      value: 'zoomOutUp'
+    },
+    {
+      value: 'slideInDown'
+    },
+    {
+      value: 'slideInLeft'
+    },
+    {
+      value: 'slideInRight'
+    },
+    {
+      value: 'slideInUp'
+    },
+    {
+      value: 'slideOutDown'
+    },
+    {
+      value: 'slideOutLeft'
+    },
+    {
+      value: 'slideOutRight'
+    },
+    {
+      value: 'slideOutUp'
+    },
+  ];

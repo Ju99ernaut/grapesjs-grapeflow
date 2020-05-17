@@ -60,7 +60,8 @@ class CustomMenu {
     buildHoverTarget() {
         const cont = document.createElement('div');
         cont.id = "target";
-        cont.addEventListener('mouseover', this.openLeftMenu);
+        cont.innerHTML = `<i class="fa fa-caret-right"></i>`
+        cont.addEventListener('click', this.openLeftMenu);
         return cont;
     }
 
@@ -281,7 +282,7 @@ class CustomMenu {
     close(_menu) {
         this.event = null;
         this.deactivateAll();
-        _menu.left = "-200px";
+        _menu.left = "-202px";
     }
 
     closeAll() {
@@ -303,7 +304,7 @@ class CustomMenu {
     }
 
     closeLeftMenu() {
-        document.getElementById('left-menu').style.left = "-40px";
+        document.getElementById('left-menu').style.left = "-42px";
         this.closeAll();
     }
 }

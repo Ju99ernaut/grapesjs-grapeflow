@@ -1,3 +1,7 @@
+import {
+  animations
+} from '../consts';
+
 export default (editor, config) => {
   const sm = editor.StyleManager;
   const csm = config.customStyleManager;
@@ -59,52 +63,60 @@ export default (editor, config) => {
     {
       name: config.textFlex,
       open: false,
+      buildProps: ['justify-content', 'align-items', 'align-content',
+        'order', 'align-self'
+      ],
       properties: [{
-          name: 'Flex Container',
-          property: 'display',
-          type: 'radio',
-          defaults: 'block',
-          list: [{
-              value: 'block',
-              name: 'Disable'
-            },
-            {
-              value: 'flex',
-              name: 'Enable'
-            }
-          ]
-        },
-        {
-          name: 'Flex Parent',
-          property: 'label-parent-flex',
-          type: 'integer',
-        },
-        {
-          name: 'Direction',
-          property: 'flex-direction',
-          type: 'radio',
-          defaults: 'row',
-          list: [{
-            value: 'row',
-            name: 'Row',
-            className: 'icons-flex icon-dir-row',
-            title: 'Row',
+          name: 'Flex flow',
+          property: 'flex-flow',
+          type: 'composite',
+          requires: {
+            display: ['flex']
+          },
+          properties: [{
+            name: 'Direction',
+            property: 'flex-direction',
+            type: 'radio',
+            defaults: 'row',
+            list: [{
+              value: 'row',
+              name: 'Row',
+              className: 'icons-flex icon-dir-row',
+              title: 'Row',
+            }, {
+              value: 'row-reverse',
+              name: 'Row reverse',
+              className: 'icons-flex icon-dir-row-rev',
+              title: 'Row reverse',
+            }, {
+              value: 'column',
+              name: 'Column',
+              title: 'Column',
+              className: 'icons-flex icon-dir-col',
+            }, {
+              value: 'column-reverse',
+              name: 'Column reverse',
+              title: 'Column reverse',
+              className: 'icons-flex icon-dir-col-rev',
+            }],
           }, {
-            value: 'row-reverse',
-            name: 'Row reverse',
-            className: 'icons-flex icon-dir-row-rev',
-            title: 'Row reverse',
-          }, {
-            value: 'column',
-            name: 'Column',
-            title: 'Column',
-            className: 'icons-flex icon-dir-col',
-          }, {
-            value: 'column-reverse',
-            name: 'Column reverse',
-            title: 'Column reverse',
-            className: 'icons-flex icon-dir-col-rev',
-          }],
+            name: 'Wrap',
+            property: 'flex-wrap',
+            type: 'radio',
+            defaults: 'nowrap',
+            list: [{
+              value: 'nowrap',
+              name: 'none',
+              title: 'nowrap'
+            }, {
+              value: 'wrap',
+              name: 'wrap'
+            }, {
+              value: 'wrap-reverse',
+              name: 'reverse',
+              title: 'wrap-reverse'
+            }]
+          }]
         }, {
           name: 'Justify',
           property: 'justify-content',
@@ -154,10 +166,33 @@ export default (editor, config) => {
             className: 'icons-flex icon-al-center',
           }],
         }, {
-          name: 'Flex Children',
-          property: 'label-parent-flex',
-          type: 'integer',
-        }, {
+          name: 'Align content',
+          property: 'align-content',
+          type: 'radio',
+          defaults: 'center',
+          list: [{
+            value: 'flex-start',
+            title: 'Start',
+            className: 'icons-flex icon-al-start',
+          }, {
+            value: 'flex-end',
+            title: 'End',
+            className: 'icons-flex icon-al-end',
+          }, {
+            value: 'stretch',
+            title: 'Stretch',
+            className: 'icons-flex icon-al-str',
+          }, {
+            value: 'center',
+            title: 'Center',
+            className: 'icons-flex icon-al-center',
+          }],
+        }, // {
+        //name: 'Flex Parent',
+        //property: 'label-parent-flex',
+        //type: 'integer',
+        //},
+        {
           name: 'Order',
           property: 'order',
           type: 'integer',
@@ -167,6 +202,9 @@ export default (editor, config) => {
           name: 'Flex',
           property: 'flex',
           type: 'composite',
+          requiresParent: {
+            display: ['flex']
+          },
           properties: [{
             name: 'Grow',
             property: 'flex-grow',
@@ -248,7 +286,24 @@ export default (editor, config) => {
     }, {
       name: config.textPosition,
       open: false,
-      buildProps: ['position', 'top', 'right', 'bottom', 'left']
+      buildProps: ['position', 'top', 'left', 'right', 'bottom'],
+      properties: [{
+          name: ' ',
+          property: 'top'
+        },
+        {
+          name: ' ',
+          property: 'left'
+        },
+        {
+          name: ' ',
+          property: 'right'
+        },
+        {
+          name: ' ',
+          property: 'bottom'
+        }
+      ],
     }, {
       name: config.textTypography,
       open: false,
@@ -313,7 +368,11 @@ export default (editor, config) => {
           },
           {
             name: 'Blur',
-            property: 'text-shadow-blur'
+            property: 'text-shadow-blur',
+            type: 'slider',
+            step: 1,
+            max: 100,
+            min: 0
           },
           {
             name: 'Color',
@@ -375,38 +434,38 @@ export default (editor, config) => {
       properties: [{
         property: 'margin',
         properties: [{
-            name: 'Top',
+            name: ' ',
             property: 'margin-top'
           },
           {
-            name: 'Left',
+            name: ' ',
             property: 'margin-left'
           },
           {
-            name: 'Right',
+            name: ' ',
             property: 'margin-right'
           },
           {
-            name: 'Bottom',
+            name: ' ',
             property: 'margin-bottom'
           }
         ],
       }, {
         property: 'padding',
         properties: [{
-            name: 'Top',
+            name: ' ',
             property: 'padding-top'
           },
           {
-            name: 'Left',
+            name: ' ',
             property: 'padding-left'
           },
           {
-            name: 'Right',
+            name: ' ',
             property: 'padding-right'
           },
           {
-            name: 'Bottom',
+            name: ' ',
             property: 'padding-bottom'
           }
         ],
@@ -500,11 +559,19 @@ export default (editor, config) => {
           },
           {
             name: 'Blur',
-            property: 'box-shadow-blur'
+            property: 'box-shadow-blur',
+            type: 'slider',
+            step: 1,
+            max: 100,
+            min: 0
           },
           {
             name: 'Spread',
-            property: 'box-shadow-spread'
+            property: 'box-shadow-spread',
+            type: 'slider',
+            step: 1,
+            max: 100,
+            min: 0
           },
           {
             name: 'Color',
@@ -512,7 +579,8 @@ export default (editor, config) => {
           },
           {
             name: 'Shadow type',
-            property: 'box-shadow-type'
+            property: 'box-shadow-type',
+            type: 'radio'
           }
         ],
       }, {
@@ -523,7 +591,7 @@ export default (editor, config) => {
     }, {
       name: config.textExtra,
       open: false,
-      buildProps: ['transition', 'perspective', 'transform'],
+      buildProps: ['perspective', 'transform', 'transition'],
       properties: [{
         property: 'transition',
         properties: [{
@@ -531,12 +599,53 @@ export default (editor, config) => {
             property: 'transition-property'
           },
           {
-            name: 'Duration',
-            property: 'transition-duration'
+            name: 'Easing',
+            type: 'radio',
+            property: 'transition-timing-function',
+            list: [{
+                value: 'linear',
+                title: 'linear',
+                className: 'icons-flex icon-linear'
+              },
+              {
+                value: 'ease',
+                title: 'ease',
+                className: 'icons-flex icon-ease'
+              },
+              {
+                value: 'ease-in',
+                title: 'ease-in',
+                className: 'icons-flex icon-ease-in'
+              },
+              {
+                value: 'ease-out',
+                title: 'ease-out',
+                className: 'icons-flex icon-ease-out'
+              },
+              {
+                value: 'ease-in-out',
+                title: 'ease-in-out',
+                className: 'icons-flex icon-ease-in-out'
+              }
+            ]
           },
           {
-            name: 'Easing',
-            property: 'transition-timing-function'
+            name: 'Duration',
+            type: 'slider',
+            property: 'transition-duration',
+            step: 1,
+            min: 0,
+            max: 100,
+          },
+          {
+            name: 'Delay',
+            units: ['s'],
+            type: 'slider',
+            defaults: 0,
+            property: 'transition-delay',
+            step: 1,
+            min: 0,
+            max: 100,
           }
         ],
       }, {
@@ -564,6 +673,133 @@ export default (editor, config) => {
           {
             name: 'Scale Z',
             property: 'transform-scale-z'
+          }
+        ],
+      }, {
+        name: 'Animation',
+        property: 'animation',
+        type: 'stack',
+        properties: [{
+            name: 'Name',
+            property: 'animation-name',
+            type: 'select',
+            list: animations,
+            defaults: 'bounce',
+          },
+          {
+            name: 'Duration',
+            type: 'slider',
+            property: 'animation-duration',
+            defaults: 2,
+            units: ['s'],
+            step: 1,
+            min: 0,
+            max: 100,
+          },
+          {
+            name: 'Easing',
+            type: 'radio',
+            defaults: 'linear',
+            property: 'animation-timing-function',
+            list: [{
+                value: 'linear',
+                title: 'linear',
+                className: 'icons-flex icon-linear'
+              },
+              {
+                value: 'ease',
+                title: 'ease',
+                className: 'icons-flex icon-ease'
+              },
+              {
+                value: 'ease-in',
+                title: 'ease-in',
+                className: 'icons-flex icon-ease-in'
+              },
+              {
+                value: 'ease-out',
+                title: 'ease-out',
+                className: 'icons-flex icon-ease-out'
+              },
+              {
+                value: 'ease-in-out',
+                title: 'ease-in-out',
+                className: 'icons-flex icon-ease-in-out'
+              }
+            ]
+          },
+          {
+            name: 'Delay',
+            units: ['s'],
+            type: 'slider',
+            defaults: 2,
+            property: 'animation-delay',
+            step: 1,
+            min: 0,
+            max: 100,
+          },
+          {
+            name: 'Iteration',
+            type: 'integer',
+            defaults: 'infinite',
+            fixedValues: ['infinite'],
+            list: {
+              value: 'infinite'
+            },
+            property: 'animation-iteration-count',
+          },
+          {
+            name: 'Direction',
+            type: 'select',
+            defaults: 'normal',
+            property: 'animation-direction',
+            list: [{
+                value: 'normal'
+              },
+              {
+                value: 'reverse'
+              },
+              {
+                value: 'alternate'
+              },
+              {
+                value: 'alternate-reverse',
+              }
+            ]
+          },
+          {
+            name: 'Fill',
+            type: 'select',
+            defaults: 'none',
+            property: 'animation-fill-mode',
+            list: [{
+                value: 'none'
+              },
+              {
+                value: 'forwards'
+              },
+              {
+                value: 'backwards'
+              },
+              {
+                value: 'both'
+              }
+            ]
+          },
+          {
+            name: 'State',
+            type: 'radio',
+            defaults: 'running',
+            property: 'animation-play-state',
+            list: [{
+                value: 'running',
+                className: 'fa fa-play'
+              },
+              {
+                value: 'paused',
+                className: 'fa fa-pause'
+              }
+            ]
           }
         ],
       }]
