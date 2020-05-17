@@ -43,10 +43,10 @@ class CustomMenu {
         cMenu.appendChild(this.buildTabMenu("blocks", "Add", [basicBlocksTab, bs4BlocksTab, extraBlocksTab], true));
         cMenu.appendChild(this.buildSimpleMenu("layers", "Layout"));
         cMenu.appendChild(this.buildTabMenu("pages", "Pages", [pageTab, propertiesTab]));
-        cMenu.appendChild(this.buildSimpleMenu("cms", "CMS"));
+        //cMenu.appendChild(this.buildSimpleMenu("cms", "CMS"));
         cMenu.appendChild(this.buildTabMenu("assets", "Assets", [localTab, libraryTab], true));
-        cMenu.appendChild(this.buildTabMenu("templates", "Templates", [customBlocksTab, marketBlocksTab], true));
-        cMenu.appendChild(this.buildSimpleMenu("logic", "Logic", true));
+        //cMenu.appendChild(this.buildTabMenu("templates", "Templates", [customBlocksTab, marketBlocksTab], true));
+        //cMenu.appendChild(this.buildSimpleMenu("logic", "Logic", true));
         cMenu.appendChild(this.buildSimpleMenu("settings", "Project Settings", true));
         cMenu.appendChild(this.buildLeftBar());
         cMenu.appendChild(this.buildHoverTarget());
@@ -72,10 +72,10 @@ class CustomMenu {
         cont.appendChild(this.buildLeftBarItems("", "fa-th-large ", "Blocks", (e) => this.slideIn(e)));
         cont.appendChild(this.buildLeftBarItems("", "fa-bars ", "Layers", (e) => this.slideIn(e)));
         cont.appendChild(this.buildLeftBarItems("", "fa-file ", "Pages", (e) => this.slideIn(e)));
-        cont.appendChild(this.buildLeftBarItems("", "fa-database ", "CMS", (e) => this.slideIn(e)));
+        //cont.appendChild(this.buildLeftBarItems("", "fa-database ", "CMS", (e) => this.slideIn(e)));
         cont.appendChild(this.buildLeftBarItems("", "fa-picture-o ", "Assets", (e) => this.slideIn(e)));
-        cont.appendChild(this.buildLeftBarItems("", "fa-shopping-cart ", "Templates", (e) => this.slideIn(e)));
-        cont.appendChild(this.buildLeftBarItems("", "fa-microchip ", "Logic", (e) => this.slideIn(e)));
+        //cont.appendChild(this.buildLeftBarItems("", "fa-shopping-cart ", "Templates", (e) => this.slideIn(e)));
+        //cont.appendChild(this.buildLeftBarItems("", "fa-microchip ", "Logic", (e) => this.slideIn(e)));
         cont.appendChild(this.buildLeftBarItems("", "fa-cogs ", "Settings", (e) => this.slideIn(e)));
         cont.appendChild(this.buildLeftBarItems("left-menu-trans", "fa-hand-rock-o ", "Translate mode", (e) => this.setDragMode(e)));
         cont.appendChild(this.buildLeftBarItems("left-menu-abs", "fa-arrows ", "Absolute mode", (e) => this.setDragMode(e)));

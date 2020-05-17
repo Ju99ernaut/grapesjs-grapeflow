@@ -107,14 +107,14 @@ export default (editor, config) => {
         command: otm,
         className: 'fa fa-cog',
       },
-      {
-        id: 'open-im',
-        command: cmdInteractions,
-        className: 'fa fa-bolt',
-        attributes: {
-          title: 'interactions',
-        },
-      }, //{
+      //{
+      //id: 'open-im',
+      //command: cmdInteractions,
+      //className: 'fa fa-bolt',
+      //attributes: {
+      //title: 'interactions',
+      //},
+      //}, {
       //id: olm,
       //command: olm,
       //className: 'fa fa-file-code-o',
