@@ -206,6 +206,11 @@ html {
   color: #cf9269;
 }
 
+.gjs-select optgroup {
+  background-color: #3a383f;
+  color: white;
+}
+
 .gjs-radio-item-label {
   cursor: pointer;
   display: block;
@@ -223,6 +228,23 @@ html {
 
 .gjs-pn-devices-c {
   visibility: hidden;
+}
+
+.gjs-btn-prim {
+  background-color: $classColor;
+  color: white;
+}
+
+.gjs-btn-prim:hover {
+  background-color: $quaternaryColor;
+}
+
+.gjs-btn-prim:focus {
+  background-color: $primaryColor;
+}
+
+.cke_dialog_ui_input_select option {
+  color: white
 }
 
 #left-menu {
@@ -293,11 +315,7 @@ html {
       animation-delay: 2s;*/
 }
 
-.left-menu-expanded div {
-  margin-right: 1px;
-}
-
-.left-menu-expanded div#settings {
+.left-menu-expanded span.close.fa.fa-times {
   margin-right: 5px;
 }
 
@@ -1024,6 +1042,13 @@ html {
 #gjs-sm-animation-name,
 #gjs-sm-vertical-align {
   width: 100%;
+}
+
+#gjs-sm-animation-iteration-count,
+#gjs-sm-perspective,
+#gjs-sm-line-height,
+#gjs-sm-order {
+  width: 75%;
 }
 
 /*Deprecated Code Editor*/

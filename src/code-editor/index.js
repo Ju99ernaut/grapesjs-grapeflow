@@ -206,7 +206,8 @@ class CodeEditor {
         const cssCode = this.cssCodeEditor.editor.getValue();
         if (!cssCode || cssCode === this.previousCssCode) return;
         this.previousCssCode = cssCode;
-        //this.editor.setStyle(cssCode)
+        this.editor.SelectorManager.add(this.editor.Parser.parseCss(cssCode));
+        this.editor.setStyle(cssCode)
         const cc = this.editor.CssComposer;
         const selectorRules = cssCode.split(/(?<=}\n)/g);
         for (let pair in selectorRules) {
@@ -303,7 +304,7 @@ class CodeEditor {
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Template';
         b.className += "gjs-btn-prim save-modal-btn";
         //todo ensure request is called if there are changes
-        b.addEventListener('click', (e) => this.saveBlock(e));
+        b.addEventListener('click', e => this.saveBlock(e));
         return b
     }
 
@@ -331,12 +332,14 @@ class CodeEditor {
         }
         const fs = editor.StorageManager.get('flow-storage');
         console.log("Procesing block " + this.ccid + "...");
-        const preview = document.getElementById('preview');
-        preview.innerHTML = this.htmlCodeEditor.editor.getValue() + '<style>' +
-            this.cssCodeEditor.editor.getValue() + '</style>';
-        preview.style.display = "block";
         this.editor.Modal.close();
-        htmlToImage.toJpeg(document.getElementById('preview').firstChild, {
+        const iframe = document.getElementsByTagName("iframe");
+        const iframeDoc = iframe[0].contentDocument;
+        if (this.ccid == "" || this.ccid == null || this.ccid == undefined) {
+            console.log("Please assign id to element before save");
+            return;
+        }
+        htmlToImage.toJpeg(iframeDoc.getElementById(this.ccid), {
             quality: 0.05,
         }).then(dataUrl => {
             preview.style.display = "none";
@@ -345,6 +348,7 @@ class CodeEditor {
         }).catch(err => {
             console.error("Error saving preview ", err); //!
         });
+        console.log("Block saved successfully and will be available when editor is reloaded");
     }
 
     /**

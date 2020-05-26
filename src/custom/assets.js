@@ -76,8 +76,8 @@ class Assets {
             console.error("Failed to upload...", err);
             //console.error(err);
         });
-        $("assets-search").addEventListener('change', e => {
-            console.log("Searching assets");
+        $("assets-search").addEventListener('input', e => {
+            this.filterAssets(e);
         });
     }
 
@@ -123,16 +123,36 @@ class Assets {
         for (let i = 0; i < assets.length; i++) {
             //console.log(assets.models[i].attributes);
             let url = assets.models[i].attributes.src;
-            let s = url.split("/");
-            let name = s[s.length - 1];
+            let name = url.split("/").pop();
             let dim = assets.models[i].attributes.width + "x" + assets.models[i].attributes.height + assets.models[i].attributes.unitDim;
             cont.appendChild(this.buildAsset(url, name, dim));
         }
         return cont;
     }
 
+    buildAssetsFromFilter(assets) {
+        const cont = document.createElement('div');
+        cont.className += pfx + "am-assets";
+        cont.style.overflow = "visible";
+        for (let i = 0; i < assets.length; i++) {
+            //console.log(assets.models[i].attributes);
+            let url = assets[i].attributes.src;
+            let name = url.split("/").pop();
+            let dim = assets[i].attributes.width + "x" + assets[i].attributes.height + assets[i].attributes.unitDim;
+            cont.appendChild(this.buildAsset(url, name, dim));
+        }
+        return cont;
+    }
+
     filterAssets(e) {
-        console.log(e);
+        const tab = document.getElementById(localTab.id + '-tab');
+        const am = editor.AssetManager
+        const all = am.getAll();
+        //const filter = all.filter(block => categories.includes(block.attributes.id));
+        tab.innerHTML = "";
+        const filter = all.filter(asset => asset.id.split("/").pop().match(e.target.value) !== null);
+        tab.appendChild(this.buildAssetsFromFilter(filter));
+        am.render(filter);
     }
 
     buildLibrary() {

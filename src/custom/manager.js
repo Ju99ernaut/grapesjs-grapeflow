@@ -63,6 +63,7 @@ class Manager {
             metaDesc: '',
             slug: '',
         };
+        this.useSessionStorage = false;
         const clbErr = err => {
             console.error("Error while loading project...", err);
             //console.error(err);
@@ -84,6 +85,13 @@ class Manager {
                 editor.setStyle(JSON.parse(this.project[0].styles.replace(/^"|"$/g, "")));
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + this.currentIndex;
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + this.currentIndex + "/";
+                if (typeof (sessionStorage) !== undefined) {
+                    this.useSessionStorage = true;
+                    console.log("Using session storage for faster page loading");
+                    for (let page in this.project) {
+                        sessionStorage.setItem(this.project[page].uuid, JSON.stringify(this.project[page]));
+                    }
+                }
                 this.layerIconMap();
                 this.buildMangerPanel(this.name, projects); //todo Get project name
                 console.log("Project loaded", result);
@@ -415,19 +423,20 @@ class Manager {
         if (e.currentTarget.title != "delete") {
             //todo check if event is equal to the current open page
             if (e.currentTarget.dataset.index != this.currentIndex) {
-                this.storePage();
-                //? change the load url
-                editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + e.currentTarget.dataset.index;
-                this.loadPage();
-                //? change the storage url -> load url
-                editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + e.currentTarget.dataset.index + "/";
-                this.currentIndex = e.currentTarget.dataset.index;
-                let p = e.currentTarget.parentNode;
-                let c = p.childNodes;
+                const p = e.currentTarget.parentNode;
+                const c = p.childNodes;
                 for (let i = 1; i < c.length; i++) {
                     c[i].className = c[i].className.replace("page-open", "");
                 }
                 e.currentTarget.className += "page-open";
+                this.storePage(e.currentTarget.dataset.index);
+                editor.setComponents(loader);
+                //? change the load url
+                editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + e.currentTarget.dataset.index;
+                this.loadPage(e.currentTarget.dataset.index);
+                //? change the storage url -> load url
+                editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + e.currentTarget.dataset.index + "/";
+                this.currentIndex = e.currentTarget.dataset.index;
             }
         }
     }
@@ -437,7 +446,7 @@ class Manager {
         const mdlClass = 'gjs-mdl-dialog-sm';
         var mdlDialog = document.querySelector('.gjs-mdl-dialog');
         mdlDialog.className += ' ' + mdlClass;
-        infoContainer.style.display = 'block';
+        //infoContainer.style.display = 'block';
         modal.setTitle('<div>Create Page</div>');
         modal.setContent(`
             <div style="font-size:14px">Select page template to create...</div>
@@ -540,12 +549,19 @@ class Manager {
         }
     }
 
-    storePage() {
+    storePage(uuid) {
         //? run regularly
-        editor.store(res => console.log('Saved page before switching'));
+        editor.store(res => {
+            console.log('Saved page before switching');
+            if (this.useSessionStorage) {
+                let page = JSON.parse(sessionStorage.getItem(uuid));
+                //todo loop through keys in res and reassign them to page
+                sessionStorage.setItem(uuid, JSON.stringify(page));
+            }
+        });
     }
 
-    loadPage() {
+    loadPage(uuid) {
         const clb = res => {
             editor.setComponents(JSON.parse(res.components.replace(/^"|"$/g, "")));
             editor.setStyle(JSON.parse(res.styles.replace(/^"|"$/g, "")));
@@ -564,9 +580,13 @@ class Manager {
         const clbErr = err => {
             console.error(err);
         }
-        editor.setComponents(loader);
-        const fs = editor.StorageManager.get('flow-storage');
-        fs.load(clb, clbErr);
+        if (this.useSessionStorage) {
+            const page = JSON.parse(sessionStorage.getItem(uuid));
+            clb(page);
+        } else {
+            const fs = editor.StorageManager.get('flow-storage');
+            fs.load(clb, clbErr);
+        }
     }
 
     /**
@@ -579,6 +599,7 @@ class Manager {
             //? build and append page to the panel
             const pages = document.getElementById("project-pages");
             pages.appendChild(this.buildPage(res));
+            sessionStorage.setItem(res.uuid, JSON.stringify(res));
             console.log("Page created...", res);
         }
         const clbErr = (err) => {

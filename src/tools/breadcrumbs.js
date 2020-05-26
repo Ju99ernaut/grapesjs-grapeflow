@@ -5,7 +5,9 @@ export default (editor, config) => {
         if (el.className) {
             let classes = el.className.split(/\s/);
             for (let i = 0; i < classes.length; i++) {
-                str += (classes[i] != "gjs-selected") ? "." + classes[i] : "";
+                str += (classes[i] != "gjs-selected" && classes[i] != "cke_editable" &&
+                    classes[i] != "cke_editable_inline" && classes[i] != "cke_contents_ltr" &&
+                    classes[i] != "cke_show_borders") ? "." + classes[i] : "";
             }
         }
         return generateTree(el.parentNode) + `<li><a><span>${str}</span></a></li>`;
@@ -17,8 +19,9 @@ export default (editor, config) => {
         return generateTree(el.parentNode) + `<li><a><span>${el.tagName.toLowerCase()}</span></a></li>`;
     }
 
+    const iframe = document.getElementsByTagName("iframe");
+
     editor.on('component:selected', model => {
-        const iframe = document.getElementsByTagName("iframe");
         const $ = iframe[0].contentDocument;
         const el = $.getElementById(model.attributes.attributes.id);
         document.getElementById("breadcrumbs").innerHTML = (el != null) ? generateQuerySelector(el) :

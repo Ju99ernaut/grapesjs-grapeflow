@@ -1,10 +1,11 @@
-import {
-  animations
-} from '../consts';
+import animSelect from './animationsSelect';
 
 export default (editor, config) => {
   const sm = editor.StyleManager;
   const csm = config.customStyleManager;
+
+  //Load opt select
+  animSelect(editor, sm);
 
   sm.getSectors().reset(csm && csm.length ? csm : [{
       name: config.textLayout,
@@ -56,6 +57,19 @@ export default (editor, config) => {
             value: 'flex',
             title: 'flex',
             className: 'icons-flex icon-disp-flex'
+          }
+        ],
+      }, {
+        property: 'visibility',
+        type: 'radio',
+        defaults: 'visible',
+        list: [{
+            value: 'visible',
+            className: 'fa fa-eye'
+          },
+          {
+            value: 'hidden',
+            className: 'fa fa-eye-slash'
           }
         ],
       }],
@@ -255,10 +269,34 @@ export default (editor, config) => {
     }, {
       name: config.textDimension,
       open: false,
-      buildProps: ['width', 'height', 'min-width', 'max-width', 'min-height', 'max-height', 'overflow'],
+      buildProps: ['width', 'height', 'min-width', 'max-width', 'min-height', 'max-height', 'overflow-x', 'overflow-y'],
       properties: [{
         //name: 'Alignment',
-        property: 'overflow',
+        property: 'overflow-x',
+        type: 'radio',
+        defaults: 'hidden',
+        list: [{
+            value: 'visible',
+            title: 'visible',
+            className: 'fa fa-eye'
+          },
+          {
+            value: 'hidden',
+            title: 'hidden',
+            className: 'fa fa-eye-slash'
+          },
+          {
+            value: 'scroll',
+            title: 'scroll',
+            className: 'fa fa-arrows-h'
+          },
+          {
+            value: 'auto',
+            name: 'Auto'
+          },
+        ],
+      }, {
+        property: 'overflow-y',
         type: 'radio',
         defaults: 'hidden',
         list: [{
@@ -279,7 +317,6 @@ export default (editor, config) => {
           {
             value: 'auto',
             name: 'Auto'
-            //className: 'fa fa-align-justify'
           },
         ],
       }]
@@ -311,7 +348,6 @@ export default (editor, config) => {
         'text-align', 'vertical-align', 'text-decoration', 'font-style', 'text-shadow'
       ],
       properties: [{
-        //name: 'Alignment',
         property: 'text-align',
         type: 'radio',
         defaults: 'left',
@@ -392,6 +428,21 @@ export default (editor, config) => {
             value: 'italic',
             name: 'Italic',
             className: 'fa fa-italic'
+          }
+        ],
+      }, {
+        property: 'direction',
+        type: 'radio',
+        defaults: 'ltr',
+        list: [{
+            value: 'ltr',
+            title: 'left-to-right',
+            className: 'fa fa-long-arrow-right'
+          },
+          {
+            value: 'rtl',
+            name: 'right-to-left',
+            className: 'fa fa-long-arrow-left'
           }
         ],
       }, {
@@ -493,7 +544,20 @@ export default (editor, config) => {
             property: 'border-bottom-right-radius'
           }
         ],
-      }, ],
+      }, {
+        property: 'border-collapse',
+        type: 'radio',
+        defaults: 'collapse',
+        list: [{
+            name: 'Yes',
+            value: 'collapse'
+          },
+          {
+            name: 'No',
+            value: 'separate'
+          }
+        ],
+      }],
     }, {
       name: config.textDecorations,
       open: false,
@@ -682,8 +746,7 @@ export default (editor, config) => {
         properties: [{
             name: 'Name',
             property: 'animation-name',
-            type: 'select',
-            list: animations,
+            type: 'animations-select',
             defaults: 'bounce',
           },
           {
@@ -699,7 +762,6 @@ export default (editor, config) => {
           {
             name: 'Easing',
             type: 'radio',
-            defaults: 'linear',
             property: 'animation-timing-function',
             list: [{
                 value: 'linear',

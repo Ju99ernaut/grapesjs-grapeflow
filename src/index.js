@@ -62,7 +62,7 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     <style>
       .class1 {
         color: grey;
-        margin: 5px 5px 5px 5px
+        margin: 5px 5px 5px 5px;
         padding: 5px 5px 5px 5px;
       }
     </style>

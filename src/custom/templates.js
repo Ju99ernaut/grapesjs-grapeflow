@@ -68,7 +68,6 @@ class Templates {
             this.categories.push(templates[template].category);
         }
         $("blocks-search").addEventListener('change', e => {
-            console.log("Searching blocks");
             this.filterBlocks(e);
         });
     }
@@ -77,7 +76,7 @@ class Templates {
         const bm = editor.BlockManager
         const all = bm.getAll();
         //const filter = all.filter(block => categories.includes(block.attributes.id));
-        const filter = all.filter(block => block.attributes.id == e.target.value);
+        const filter = all.filter(block => block.id.match(e.target.value) !== null);
         bm.render(filter);
     }
 
