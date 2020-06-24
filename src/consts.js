@@ -126,24 +126,24 @@ export const
     labelText: "Local",
   },
   libraryTab = {
-    id: "pixabay",
+    id: "unsplash",
     name: "assets",
-    labelText: "Pixabay",
+    labelText: "Unsplash",
   },
   basicBlocksTab = {
     id: "basic",
     name: "blocks",
-    labelText: "Basic",
+    labelText: "Starter",
   },
   bs4BlocksTab = {
     id: "bootstrap",
     name: "blocks",
-    labelText: "Bootstrap",
+    labelText: "Bootstrap4",
   },
   extraBlocksTab = {
     id: "extra",
     name: "blocks",
-    labelText: "Extra",
+    labelText: "Blocks",
   },
   customBlocksTab = {
     id: "custom",

@@ -1,61 +1,77 @@
 const properties = [{
         name: 'name',
-        label: 'Name <i class="fa fa-info"></i>',
+        label: 'Name',
         placeholder: 'eg. title',
+        url: false,
         radio: false
     },
     {
         name: 'description',
-        label: 'Description <i class="fa fa-info"></i>',
+        label: 'Description',
         placeholder: 'eg. description',
+        url: false,
         radio: false
     },
     {
         name: 'preview',
         label: 'Preview <i class="fa fa-link"></i>',
-        placeholder: 'eg. http://example.com',
+        placeholder: 'example.com', //todo autogen or file field
+        before: 'https://',
+        after: false,
+        url: true,
         radio: false
     },
     {
         name: 'multipage',
         label: 'Multipage <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
+        url: false,
         radio: true
     },
     {
         name: 'customDomain',
         label: 'Custom Domain <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
+        url: false,
         radio: true
     },
     {
         name: 'customDomainUrl',
         label: 'Custom Domain Url <i class="fa fa-link"></i>',
-        placeholder: 'eg. http://example.com',
+        placeholder: 'example.com',
+        before: 'https://',
+        after: false,
+        url: true,
         radio: false
     },
     {
         name: 'domain',
-        label: 'Domain Name <i class="fa fa-info"></i>',
-        placeholder: 'eg. domain',
+        label: 'Domain Name',
+        placeholder: 'domain',
+        before: 'https://',
+        after: '.sub.com',
+        url: true,
         radio: false
     },
     {
         name: 'public',
         label: 'Public <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
+        url: false,
         radio: true
     },
     {
         name: 'market',
         label: 'Market <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
+        url: false,
         radio: true
     },
     {
         name: 'branding',
         label: 'Branding <i class="fa fa-question-circle-o"></i>',
         placeholder: 'eg. True',
+        url: false,
         radio: true
     },
 ];
@@ -76,7 +92,7 @@ class Settings {
             branding: true
         };
         const clbErr = err => {
-            console.error("Failed to load settings...", err);
+            console.warn("Failed to load settings...", err);
             //console.error(err);
         };
         fs.viewProject(res => {
@@ -92,35 +108,66 @@ class Settings {
             this.settings.market = res.market;
             this.settings.branding = res.branding;
             this.buildSettings();
-            console.log("Settings loaded");
+            console.info("Settings loaded");
         }, clbErr);
+    }
+
+    buildUrlFields(before, name, type, placeholder, after) {
+        const div = document.createElement('div');
+        div.className += "blc-form-group";
+
+        if (before) {
+            const beforeSpan = document.createElement('span');
+            beforeSpan.innerHTML = before;
+            div.appendChild(beforeSpan);
+        }
+
+        const input = document.createElement('input');
+        input.className += "blc-form-field";
+        //input.type = type ? type : 'text';
+        input.placeholder = placeholder ? placeholder : '';
+        input.name = name ? name : '';
+        input.value = this.settings[name] !== '' ?
+            this.settings[name].split('://').pop().split('.')[0] : this.settings[name];
+        input.addEventListener('change', e => this.checkUrl(e));
+        div.appendChild(input);
+
+        if (after) {
+            const afterSpan = document.createElement('span');
+            afterSpan.innerHTML = after;
+            div.appendChild(afterSpan);
+        }
+
+        return div;
+    }
+
+    buildNormalFields(name, type, radio, placeholder) {
+        const iField = document.createElement('div');
+        iField.className = "gjs-field left-menu-input";
+        const input = name == 'description' ? document.createElement('textarea') : document.createElement('input');
+        input.placeholder = placeholder;
+        //input.type = type ? type : 'text';
+        input.name = name;
+        if (radio) {
+            iField.className = "left-menu-input";
+            input.type = "checkbox";
+            input.className += "colored switch"
+            input.checked = this.settings[name];
+        } else
+            input.value = this.settings[name];
+        iField.appendChild(input);
+        return iField;
     }
 
     buildSettings() {
         let cont = document.createElement('div');
         for (let prop in properties) {
-            const iField = document.createElement('div');
-            iField.className += "gjs-field left-menu-input";
-            const i = document.createElement('i');
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
             label.className += "left-menu-label";
-            const input = properties[prop].name == 'description' ? document.createElement('textarea') : document.createElement('input');
-            input.placeholder = properties[prop].placeholder;
-            input.name = properties[prop].name;
-            if (properties[prop].radio) {
-                iField = document.createElement('label');
-                iField.className += "gjs-field gjs-field-checkbox left-menu-input";
-                input.type = "checkbox";
-                input.checked = this.settings[properties[prop].name];
-                i.className += "gjs-chk-icon";
-            } else
-                input.value = this.settings[properties[prop].name];
-            input.addEventListener('change', e => this.checkUrl(e));
-
-            iField.appendChild(input);
-            iField.appendChild(i);
             cont.appendChild(label);
+            const iField = properties[prop].url ? this.buildUrlFields(properties[prop].before, properties[prop].name, 'text', properties[prop].placeholder, properties[prop].after) :
+                this.buildNormalFields(properties[prop].name, 'text', properties[prop].radio, properties[prop].placeholder);
             cont.appendChild(iField);
         }
         cont.appendChild(this.saveButton());
@@ -138,10 +185,10 @@ class Settings {
 
     saveSettings(e) {
         const clb = (res) => {
-            console.log("Settings updated...", res);
+            console.info("Settings updated", res);
         }
         const clbErr = (err) => {
-            console.error(err);
+            console.warn("Failed to update settings", err);
         }
         const fs = editor.StorageManager.get('flow-storage');
         //todo modify request, and ensure it is called if there are changes
@@ -158,7 +205,7 @@ class Settings {
             else if (e.target.name != "preview" && e.target.name != "customDomainUrl")
                 this.settings[e.target.name] = e.target.value;
             else {
-                console.warn("Invalid url");
+                console.info("Invalid url");
                 e.target.value = "";
             }
         } else

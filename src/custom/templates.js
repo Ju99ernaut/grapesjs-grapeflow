@@ -14,10 +14,10 @@ class Templates {
             this.templates = res;
             this.buildFromBlockManager(res);
             this.migrate();
-            console.log("Blocks loaded...", res);
+            console.info("Blocks loaded ", res);
         }
         const clbErr = (err) => {
-            console.error(err);
+            console.warn("Error loadind blocks", err);
         }
         const fs = editor.StorageManager.get('flow-storage');
         fs.loadBlock(clb, clbErr);

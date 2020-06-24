@@ -34,12 +34,12 @@ const properties = [{
     },
     {
         name: 'name',
-        label: 'Name <i class="fa fa-info-circle"></i>',
+        label: 'Name',
         placeholder: 'eg. name'
     },
     {
         name: 'description',
-        label: 'Description <i class="fa fa-info-circle"></i>',
+        label: 'Description',
         placeholder: 'eg. description'
     },
 ];
@@ -99,6 +99,7 @@ class CodeEditor {
      */
     buildSection(type, editor, textArea) {
         const section = document.createElement('section');
+        section.id = type + '-panel';
         section.innerHTML = `<div class="codepanel-separator">
         <div class="codepanel-label">${type}</div>
         <button class="${pfx}btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
@@ -107,9 +108,9 @@ class CodeEditor {
             section.innerHTML = `<div class="codepanel-separator">
             <div class="codepanel-label">${type}</div>
             <button class="${pfx}btn-prim" id="save-component"><i class="fa fa-link-floppy-o"></i>Save Component</button>
-            <button class="${pfx}btn-prim" id="save-all"><i class="fa fa-link-floppy-o"></i>Save All</button>
             <button class="${pfx}btn-prim" id="cp-save-${type}"><i class="fa fa-link-floppy-o"></i>Save/${type}</button>
             </div>`;
+            //<button class="${pfx}btn-prim" id="save-all"><i class="fa fa-link-floppy-o"></i>Save All</button>
         }
         section.appendChild(textArea);
         this.codePanel.appendChild(section);
@@ -136,17 +137,17 @@ class CodeEditor {
 
         $('cp-save-html').addEventListener('click', this.updateHtml.bind(this));
         $('cp-save-css').addEventListener('click', this.updateCss.bind(this));
-        $('save-all').addEventListener('click', () => {
-            this.updateHtml();
-            this.updateCss();
-        });
+        //$('save-all').addEventListener('click', () => {
+        //    this.updateHtml();
+        //    this.updateCss();
+        //});
         $('save-component').addEventListener('click', this.openAddModal.bind(this));
 
         Split(sections, {
             direction: 'vertical',
             sizes: [50, 50],
             minSize: 100,
-            gutterSize: 2,
+            gutterSize: 1,
             onDragEnd: this.refreshEditors.bind(this)
         });
 
@@ -199,7 +200,7 @@ class CodeEditor {
             at
         });
         //?this.editor.getSelected().components(htmlCode); method duplicates components
-        console.log("Component html updated");
+        console.info("Component html updated");
     }
 
     updateCss() {
@@ -207,7 +208,7 @@ class CodeEditor {
         if (!cssCode || cssCode === this.previousCssCode) return;
         this.previousCssCode = cssCode;
         this.editor.SelectorManager.add(this.editor.Parser.parseCss(cssCode));
-        this.editor.setStyle(cssCode)
+        //this.editor.setStyle(cssCode)
         const cc = this.editor.CssComposer;
         const selectorRules = cssCode.split(/(?<=}\n)/g);
         for (let pair in selectorRules) {
@@ -216,7 +217,7 @@ class CodeEditor {
             if (!/^@/.test(rulePair[0]))
                 cc.setRule(rulePair[0], rulePair[1].replace("{", ""));
         }
-        console.log("Component css rules updated");
+        console.info("Component css rules updated");
     }
 
     updateEditorContents() {
@@ -325,18 +326,18 @@ class CodeEditor {
 
     saveBlock(e) {
         const clb = (res) => {
-            console.log("Block saved...", res);
+            console.log("Block saved", res);
         }
         const clbErr = (err) => {
-            console.error(err);
+            console.warn("Failed to save block", err);
         }
         const fs = editor.StorageManager.get('flow-storage');
-        console.log("Procesing block " + this.ccid + "...");
+        console.info("Procesing block " + this.ccid + "...");
         this.editor.Modal.close();
         const iframe = document.getElementsByTagName("iframe");
         const iframeDoc = iframe[0].contentDocument;
         if (this.ccid == "" || this.ccid == null || this.ccid == undefined) {
-            console.log("Please assign id to element before save");
+            console.warn("Please assign id to element before save");
             return;
         }
         htmlToImage.toJpeg(iframeDoc.getElementById(this.ccid), {
@@ -346,9 +347,9 @@ class CodeEditor {
             this.properties.preview = dataUrl;
             fs.storeBlock(this.properties, clb, clbErr); //!reload blocks
         }).catch(err => {
-            console.error("Error saving preview ", err); //!
+            console.warn("Error saving preview ", err); //!
         });
-        console.log("Block saved successfully and will be available when editor is reloaded");
+        console.info("Block saved successfully and will be available when editor is reloaded");
     }
 
     /**

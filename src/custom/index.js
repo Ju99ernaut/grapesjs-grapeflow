@@ -206,14 +206,14 @@ class CustomMenu {
             document.getElementById('left-menu-trans').className = document.getElementById('left-menu-trans').className
                 .replace(pfx + "pn-active", "");
             this.abSet = !this.abSet;
-            console.warn("More design freedom at the cost of responsiveness");
+            console.warn("Use only for unresponsive pages");
         } else if (mode == 'translate' && !this.trnSet) {
             editor.getModel().set('dmode', mode);
             document.getElementById('left-menu-trans').className += pfx + "pn-active";
             document.getElementById('left-menu-abs').className = document.getElementById('left-menu-abs').className
                 .replace(pfx + "pn-active", "");
             this.trnSet = !this.trnSet;
-            console.warn("You may have to cycle all device modes and fix alignment issues");
+            console.info("You may have to cycle all device modes and fix alignment issues");
         } else {
             editor.getModel().set('dmode', 'default');
             document.getElementById('left-menu-abs').className = document.getElementById('left-menu-abs').className
@@ -222,7 +222,7 @@ class CustomMenu {
                 .replace(pfx + "pn-active", "");
             this.abSet = false;
             this.trnSet = false;
-            console.log("Default drag mode set");
+            console.info("Default drag mode set");
         }
     }
 
@@ -282,7 +282,7 @@ class CustomMenu {
     close(_menu) {
         this.event = null;
         this.deactivateAll();
-        _menu.left = "-202px";
+        _menu.left = "-224px";
     }
 
     closeAll() {
@@ -304,7 +304,7 @@ class CustomMenu {
     }
 
     closeLeftMenu() {
-        document.getElementById('left-menu').style.left = "-42px";
+        document.getElementById('left-menu').style.left = "-44px";
         this.closeAll();
     }
 }

@@ -60,13 +60,10 @@ export default (editor, config) => {
       //Open Style Manager
     }
   });
-  cm.add(cmdSave, {
-    run: function (ed) {
-      ed.store(res => {
-        console.log("Saved...")
-      });
-    },
-    stop: function () {}
+  cm.add(cmdSave, e => {
+    editor.store(res => {
+      console.log("Saved...")
+    });
   });
   cm.add(cmdClear, e => {
     var mdlDialog = document.querySelector('.gjs-mdl-dialog');
@@ -74,14 +71,14 @@ export default (editor, config) => {
     infoContainer.style.display = 'block';
     modal.setTitle('<div>Canvas</div>');
     const div = document.createElement('div');
-    div.innerHTML = "<div>Are you sure you want to clear the canvas?</div><br>";
+    div.innerHTML = '<div style="font-size:15px">Are you sure you want to clear the canvas?</div><br>';
     const b = document.createElement('button');
     b.className += "gjs-btn-prim";
     b.innerHTML = "Clear";
     b.addEventListener('click', () => {
       editor.runCommand('core:canvas-clear');
       editor.Modal.close();
-      console.log("Canvas cleared...use 'undo' to undo");
+      console.info("Canvas cleared...use 'undo' to undo");
     });
     div.appendChild(b);
     modal.setContent(div);
@@ -95,9 +92,11 @@ export default (editor, config) => {
     var mdlDialog = document.querySelector('.gjs-mdl-dialog');
     mdlDialog.className += ' ' + mdlClass;
     infoContainer.style.display = 'block';
-    modal.setTitle('<div>Launch Settings</div>');
+    modal.setTitle('<div>Publish</div>');
     const div = document.createElement('div');
-    div.innerHTML = "<div>This is supposed to show some settings before publish, publish button should commit changes to website</div><br>";
+    let domain = "example.blocomposer.com";
+    div.innerHTML = `<div style="font-size: 15px">You are about to publish changes to:</div><br>
+      <div class="domain-name">${domain}</div><br>`;
     const b = document.createElement('button');
     b.className += "gjs-btn-prim";
     b.innerHTML = "Publish";

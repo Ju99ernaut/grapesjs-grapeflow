@@ -59,6 +59,12 @@ export default (editor, config) => {
             className: 'icons-flex icon-disp-flex'
           }
         ],
+      },{
+        name: 'Z-index',
+        property: 'z-index',
+        type: 'integer',
+        defaults: 0,
+        min: 0
       }, {
         property: 'visibility',
         type: 'radio',

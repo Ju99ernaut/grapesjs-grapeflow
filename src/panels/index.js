@@ -54,14 +54,14 @@ export default (editor, config) => {
       command: e => e.runCommand(expt),
     }, {
       id: 'undo',
-      className: 'font-aqua fa fa-undo',
+      className: 'font-aqua fa fa-undo', //reply
       attributes: {
         title: 'undo',
       },
       command: e => e.runCommand('core:undo'),
     }, {
       id: 'redo',
-      className: 'font-aqua fa fa-repeat',
+      className: 'font-aqua fa fa-redo', //share
       attributes: {
         title: 'redo',
       },

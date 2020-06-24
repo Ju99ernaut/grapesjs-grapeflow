@@ -151,12 +151,15 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     // `grapesjs-blocks-basic` plugin options
     // By setting this option to `false` will avoid loading the plugin
     blocksBasicOpts: {
-      flexGrid: true
+      flexGrid: true,
+      stylePrefix: 'blc'
     },
 
     // `grapesjs-navbar` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    navbarOpts: {},
+    navbarOpts: {
+      navbarClsPfx: 'blc-nav'
+    },
 
     // `grapesjs-component-countdown` plugin options
     // By setting this option to `false` will avoid loading the plugin
@@ -164,11 +167,18 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
 
     // `grapesjs-plugin-forms` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    formsOpts: {},
+    formsOpts: {
+      //category: 'Inputs'
+    },
 
     // `grapesjs-blocks-bootsrap4` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    bs4Opts: {},
+    bs4Opts: {
+      blocks: {
+        image: false,
+        video: false,
+      },
+    },
 
     // `grapesjs-plugin-export` plugin options
     // By setting this option to `false` will avoid loading the plugin
@@ -417,13 +427,13 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     console.log('Loaded ', e)
   });
   editor.on('storage:error:load', function (e) {
-    console.log('Loading error ', e)
+    console.warn('Failed to load ', e)
   });
   //editor.on('storage:store', function (e) {
   //  console.log(e)
   //});
   editor.on('storage:error:store', function (e) {
-    console.error('Storage error ', e)
+    console.warn('Storage error ', e)
   });
 
 });

@@ -10,38 +10,58 @@ import {
 
 const properties = [{
         name: 'name',
-        label: 'Name <i class="fa fa-info"></i>',
-        placeholder: 'eg. name'
+        label: 'Name',
+        placeholder: 'eg. name',
+        url: false,
+        radio: false
     },
     {
         name: 'thumbnail',
         label: 'Thumbnail <i class="fa fa-link"></i>',
-        placeholder: 'eg. http://example.com'
+        placeholder: 'example.com', //todo later introduce auto generation or file field
+        before: 'https://',
+        after: false,
+        url: true,
+        radio: false
     },
     {
         name: 'favicon',
         label: 'Favicon <i class="fa fa-link"></i>',
-        placeholder: 'eg. http://example.com'
+        placeholder: 'example.com', //todo introduce file field
+        before: 'https://',
+        after: false,
+        url: true,
+        radio: false
     },
     {
         name: 'webclip',
         label: 'Webclip <i class="fa fa-link"></i>',
-        placeholder: 'eg. http://example.com'
+        placeholder: 'example.com', //todo introduce file field
+        before: 'https://',
+        after: false,
+        url: true,
+        radio: false
     },
     {
         name: 'metaTitle',
-        label: 'Meta Title <i class="fa fa-info"></i>',
-        placeholder: 'eg. title'
+        label: 'Meta Title',
+        placeholder: 'eg. title',
+        url: false,
+        radio: false
     },
     {
         name: 'metaDesc',
-        label: 'Meta Description <i class="fa fa-info"></i>',
-        placeholder: 'eg. description'
+        label: 'Meta Description', // <i class="fa fa-info"></i>
+        placeholder: 'eg. description',
+        url: false,
+        radio: false
     },
     {
         name: 'slug',
-        label: 'Slug <i class="fa fa-info"></i>',
-        placeholder: 'eg. slug'
+        label: 'Slug',
+        placeholder: 'eg. slug',
+        url: false,
+        radio: false
     },
 ];
 
@@ -52,6 +72,10 @@ class Manager {
         const fs = editor.StorageManager.get('flow-storage');
         this.name = "Placeholder"
         this.project = null;
+        //todo implement checking if IDB is still available, debug indexedDB and upload icon to upload after working offline
+        this.disableIDB = true;
+        this.useIndexedDB = false;
+        this.db = null;
         this.currentIndex = '';
         this.currentProject = '';
         this.properties = {
@@ -63,9 +87,8 @@ class Manager {
             metaDesc: '',
             slug: '',
         };
-        this.useSessionStorage = false;
         const clbErr = err => {
-            console.error("Error while loading project...", err);
+            console.warn("Error while loading project...", err);
             //console.error(err);
         }
         fs.viewProject(res => {
@@ -85,18 +108,86 @@ class Manager {
                 editor.setStyle(JSON.parse(this.project[0].styles.replace(/^"|"$/g, "")));
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlLoadPages = this.urlLoad + this.currentIndex;
                 editor.Config.pluginsOpts["grapesjs-grapeflow"].urlStorePages = this.urlStore + this.currentIndex + "/";
-                if (typeof (sessionStorage) !== undefined) {
-                    this.useSessionStorage = true;
-                    console.log("Using session storage for faster page loading");
-                    for (let page in this.project) {
-                        sessionStorage.setItem(this.project[page].uuid, JSON.stringify(this.project[page]));
-                    }
+                if (typeof (indexedDB) !== undefined && !this.disableIDB) {
+                    this.useIndexedDB = true;
+                    this.createIndexedDB(this.project,
+                        db => console.log("DB built successfully"),
+                        err => console.log("An error occured building database"))
                 }
                 this.layerIconMap();
                 this.buildMangerPanel(this.name, projects); //todo Get project name
-                console.log("Project loaded", result);
+                console.info("Project loaded", result);
             });
         }, clbErr);
+    }
+
+    createIndexedDB(pages, clb, clbErr) {
+        //window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        //window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+        //window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+        const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+
+        const request = indexedDB.open("pagesDB", 3);
+        request.onerror = e => clbErr(e);
+        request.onsuccess = e => {
+            this.db = request.result;
+            clb(this.db);
+        };
+        request.onupgradeneeded = e => {
+            let db = e.target.result;
+            const objStore = db.createObjectStore("page", {
+                keyPath: "uuid"
+            });
+
+            for (let page in pages) {
+                objStore.add(pages[page]);
+            }
+        }
+    }
+
+    indexedDBLoad(uuid, clb, clbErr) {
+        const transaction = this.db.transaction(["page"]);
+        const objStore = transaction.objectStore("page");
+        const request = objStore.get(uuid);
+
+        request.onerror = e => clbErr(e);
+        request.onsuccess = e => {
+            if (request.result)
+                clb(request.result);
+            else
+                console.log("Record not found:", uuid);
+        }
+    }
+
+    indexedDBStore(data, clb, clbErr) {
+        const request = this.db.transaction(["page"], "readwrite")
+            .objectStore("page")
+            .add(data);
+        request.onsuccess = e => clb(e);
+        request.onerror = e => clbErr(e);
+    }
+
+    indexedDBUpdate(data, clb, clbErr) {
+        const request = this.db.transaction(["page"], "readwrite")
+            .objectStore("page")
+            .get(data.uuid);
+        request.onsuccess = e => {
+            const requestUpdate = this.db.transaction(["page"], "readwrite")
+                .objectStore("page")
+                .put(data);
+            requestUpdate.onerror = e => clbErr(e);
+            requestUpdate.onsuccess = e => clb(e);
+            clb(e);
+        }
+        request.onerror = e => clbErr(e);
+    }
+
+    indexedDBRemove(uuid, clb, clbErr) {
+        const request = this.db.transaction(["page"], "readwrite")
+            .objectStore("page")
+            .delete(uuid);
+        request.onsuccess = e => clb(e);
+        request.onerror = e => clbErr(e);
     }
 
     layerIconMap() {
@@ -490,23 +581,63 @@ class Manager {
         });
     }
 
+    buildUrlFields(before, name, type, placeholder, after) {
+        const div = document.createElement('div');
+        div.className += "blc-form-group";
+
+        if (before) {
+            const beforeSpan = document.createElement('span');
+            beforeSpan.innerHTML = before;
+            div.appendChild(beforeSpan);
+        }
+
+        const input = document.createElement('input');
+        input.className += "blc-form-field";
+        //input.type = type ? type : 'text';
+        input.placeholder = placeholder ? placeholder : '';
+        input.name = name ? name : '';
+        input.value = this.properties[name] !== '' ?
+            this.properties[name].split('://').pop().split('.')[0] : this.properties[name];
+        input.addEventListener('change', e => this.checkUrl(e));
+        div.appendChild(input);
+
+        if (after) {
+            const afterSpan = document.createElement('span');
+            afterSpan.innerHTML = after;
+            div.appendChild(afterSpan);
+        }
+
+        return div;
+    }
+
+    buildNormalFields(name, type, radio, placeholder) {
+        const iField = document.createElement('div');
+        iField.className = pfx + "field left-menu-input";
+        const input = name == 'metaDesc' ? document.createElement('textarea') : document.createElement('input');
+        input.placeholder = placeholder;
+        //input.type = type ? type : 'text';
+        input.name = name;
+        if (radio) {
+            iField.className = "left-menu-input";
+            input.type = "checkbox";
+            input.className += "colored switch"
+            input.checked = this.properties[name];
+        } else
+            input.value = this.properties[name];
+        iField.appendChild(input);
+        return iField;
+    }
+
     buildPropertiesSection() {
         //? replace projects section with this section
         const cont = document.createElement('div');
         for (let prop in properties) {
-            const iField = document.createElement('div');
-            iField.className += pfx + "field left-menu-input";
             const label = document.createElement('div');
             label.innerHTML = properties[prop].label;
             label.className += "left-menu-label";
-            const input = properties[prop].name == 'metaDesc' ? document.createElement('textarea') : document.createElement('input');
-            input.placeholder = properties[prop].placeholder;
-            input.name = properties[prop].name;
-            input.value = this.properties[properties[prop].name];
-            input.addEventListener('change', e => this.checkUrl(e));
-
-            iField.appendChild(input);
             cont.appendChild(label);
+            const iField = properties[prop].url ? this.buildUrlFields(properties[prop].before, properties[prop].name, 'text', properties[prop].placeholder, properties[prop].after) :
+                this.buildNormalFields(properties[prop].name, 'text', properties[prop].radio, properties[prop].placeholder);
             cont.appendChild(iField);
         }
         cont.appendChild(this.updateButton());
@@ -525,10 +656,10 @@ class Manager {
 
     updateProperties(e) {
         const clb = (res) => {
-            console.log("Properties updated...", res);
+            console.info("Properties updated...", res);
         }
         const clbErr = (err) => {
-            console.error(err);
+            console.warn("Error updating properties", err);
         }
         const fs = editor.StorageManager.get('flow-storage');
         fs.storeProperties(this.properties, clb, clbErr);
@@ -543,7 +674,7 @@ class Manager {
             else if (e.target.name != "thumbnail" && e.target.name != "favicon" && e.target.name != "webclip")
                 this.properties[e.target.name] = e.target.value;
             else {
-                console.warn("Invalid url");
+                console.info("Invalid url");
                 e.target.value = "";
             }
         }
@@ -552,13 +683,14 @@ class Manager {
     storePage(uuid) {
         //? run regularly
         editor.store(res => {
-            console.log('Saved page before switching');
-            if (this.useSessionStorage) {
-                let page = JSON.parse(sessionStorage.getItem(uuid));
-                //todo loop through keys in res and reassign them to page
-                sessionStorage.setItem(uuid, JSON.stringify(page));
+            console.info('Saving to remote storage before switching');
+            if (this.useIndexedDB) {
+                res.uuid = uuid;
+                this.indexedDBUpdate(res, e => console.log(e), e => console.log(e));
             }
         });
+        //todo loop through keys in res and reassign them to page
+        //todo On error i.e user offline use indexedDB alone then...upload when user presses button
     }
 
     loadPage(uuid) {
@@ -575,14 +707,13 @@ class Manager {
             const tab = document.querySelector('#properties-tab');
             tab.innerHTML = "";
             tab.appendChild(propertiesMenu);
-            console.log("Loaded " + res.name + " page");
+            console.info("Loaded " + res.name + " page");
         }
         const clbErr = err => {
-            console.error(err);
+            console.warn("Error loading page ", err);
         }
-        if (this.useSessionStorage) {
-            const page = JSON.parse(sessionStorage.getItem(uuid));
-            clb(page);
+        if (this.useIndexedDB) {
+            this.indexedDBLoad(uuid, clb, clbErr);
         } else {
             const fs = editor.StorageManager.get('flow-storage');
             fs.load(clb, clbErr);
@@ -599,18 +730,21 @@ class Manager {
             //? build and append page to the panel
             const pages = document.getElementById("project-pages");
             pages.appendChild(this.buildPage(res));
-            sessionStorage.setItem(res.uuid, JSON.stringify(res));
+            if (this.useIndexedDB)
+                this.indexedDBStore(res, e => console.log(e), e => console.log(e));
             console.log("Page created...", res);
         }
         const clbErr = (err) => {
-            console.error(err);
+            console.warn("Error creating page", err);
         }
         fs.create(data, clb, clbErr);
     }
 
     deletePage() {
         const fs = editor.StorageManager.get('flow-storage');
-        fs.delete(res => console.log('Delete page'));
+        fs.delete(res => console.info('Page deleted'));
+        if (this.useIndexedDB)
+            this.indexedDBRemove(res, e => console.log(e), e => console.log(e));
     }
 
     /****************************************************************

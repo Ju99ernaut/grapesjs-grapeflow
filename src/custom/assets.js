@@ -16,10 +16,10 @@ class Assets {
                 as.add(url);
             }
             this.buildAssetsPanel();
-            console.log('Assets loaded', res);
+            console.info('Assets loaded', res);
         }
         const clbErr = (err) => {
-            console.error("Failed to load assets...", err);
+            console.warn("Failed to load assets", err);
             //console.error(err);
         }
         rs.request(editor.Config.assetManager.upload, {
@@ -73,7 +73,7 @@ class Assets {
             console.log("Asset upload success", res);
         });
         editor.on('asset:upload:error', err => {
-            console.error("Failed to upload...", err);
+            console.warn("Failed to upload", err);
             //console.error(err);
         });
         $("assets-search").addEventListener('input', e => {
@@ -102,7 +102,7 @@ class Assets {
         cont.className += pfx + "am-asset " + pfx + "am-asset-image";
         const image = `
             <div class="left ${pfx}am-preview-cont">
-                <img alt=${name} src=${url} class="asset-menu-image">
+                <img data-gjs-type="image" alt=${name} src=${url} class="asset-menu-image">
             </div>
             <div class="left ${pfx}am-meta">
                 <div class="${pfx}am-name" title=${name}>${name}</div>
@@ -159,15 +159,15 @@ class Assets {
         return `
         <div class="gjs-blocks-c">
         <div class="gjs-block gjs-one-bg gjs-four-color-h gjs-image-block">
-        <img alt="background3.jpg" src="http://127.0.0.1:8000/media/background3.jpg" >
+        <img data-gjs-type="image" alt="background3.jpg" src="http://127.0.0.1:8000/media/background3.jpg" >
         <div class="gjs-block-label">by person1</div>
         </div>
         <div class="gjs-block gjs-one-bg gjs-four-color-h gjs-image-block">
-        <img alt="background2.jpg" src="http://127.0.0.1:8000/media/background2.jpg">
+        <img data-gjs-type="image" alt="background2.jpg" src="http://127.0.0.1:8000/media/background2.jpg">
         <div class="gjs-block-label">by person2</div>
         </div>
         <div class="gjs-block gjs-one-bg gjs-four-color-h gjs-image-block">
-        <img alt="background1.jpg" src="http://127.0.0.1:8000/media/background1.jpg">
+        <img data-gjs-type="image" alt="background1.jpg" src="http://127.0.0.1:8000/media/background1.jpg">
         <div class="gjs-block-label">by person3</div>
         </div>
         </div>
