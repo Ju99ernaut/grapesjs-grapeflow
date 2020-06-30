@@ -12,15 +12,15 @@ const properties = [{
         url: false,
         radio: false
     },
-    {
-        name: 'preview',
-        label: 'Preview <i class="fa fa-link"></i>',
-        placeholder: 'example.com', //todo autogen or file field
-        before: 'https://',
-        after: false,
-        url: true,
-        radio: false
-    },
+    //?{ DROP
+    //    name: 'preview',
+    //    label: 'Preview <i class="fa fa-link"></i>',
+    //    placeholder: 'example.com', //todo autogen or file field
+    //    before: 'https://',
+    //    after: false,
+    //    url: true,
+    //    radio: false
+    //},
     {
         name: 'multipage',
         label: 'Multipage <i class="fa fa-question-circle-o"></i>',
@@ -39,7 +39,7 @@ const properties = [{
         name: 'customDomainUrl',
         label: 'Custom Domain Url <i class="fa fa-link"></i>',
         placeholder: 'example.com',
-        before: 'https://',
+        before: 'http://',
         after: false,
         url: true,
         radio: false
@@ -48,7 +48,7 @@ const properties = [{
         name: 'domain',
         label: 'Domain Name',
         placeholder: 'domain',
-        before: 'https://',
+        before: 'http://',
         after: '.sub.com',
         url: true,
         radio: false
@@ -128,7 +128,10 @@ class Settings {
         input.placeholder = placeholder ? placeholder : '';
         input.name = name ? name : '';
         input.value = this.settings[name] !== '' ?
-            this.settings[name].split('://').pop().split('.')[0] : this.settings[name];
+            (input.name == "domain" ?
+                this.settings[name].split('://').pop().split('.')[0] :
+                this.settings[name].split('://').pop()) :
+            this.settings[name];
         input.addEventListener('change', e => this.checkUrl(e));
         div.appendChild(input);
 
@@ -196,20 +199,18 @@ class Settings {
     }
 
     checkUrl(e) {
-        let regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
-        let regUrl = new RegExp(regexQuery, "i");
-        //!regex not working
-        if (e.target.value !== "" && e.target.type !== "checkbox") {
-            if (e.target.value.match(regUrl) !== null)
-                this.settings[e.target.name] = e.target.value;
-            else if (e.target.name != "preview" && e.target.name != "customDomainUrl")
-                this.settings[e.target.name] = e.target.value;
-            else {
-                console.info("Invalid url");
-                e.target.value = "";
-            }
-        } else
-            this.settings[e.target.name] = e.target.checked;
+        const regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
+        const regUrl = new RegExp(regexQuery, "i");
+        const url = evt.target.name == "domain" ? "http://" + e.target.value + "sub.com" :
+            "http://" + e.target.value;
+        if (url.match(regUrl) !== null)
+            this.settings[e.target.name] = url;
+        else {
+            console.info("Invalid url");
+            e.target.value = evt.target.name == "domain" ?
+                this.settings[e.target.name].split('://').pop().split('.')[0] :
+                this.settings[e.target.name].split('://').pop();
+        }
     }
 }
 

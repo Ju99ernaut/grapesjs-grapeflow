@@ -7,7 +7,7 @@ import {
 
 class Assets {
     constructor() {
-        this.base = 'http://127.0.0.1:8000'; //todo add this to config 
+        this.base = editor.Config.mediaBase;
         const as = editor.AssetManager;
         const rs = editor.StorageManager.get('remote');
         const clb = (res) => {
@@ -120,27 +120,11 @@ class Assets {
         const cont = document.createElement('div');
         cont.className += pfx + "am-assets";
         cont.style.overflow = "visible";
-        for (let i = 0; i < assets.length; i++) {
-            //console.log(assets.models[i].attributes);
-            let url = assets.models[i].attributes.src;
-            let name = url.split("/").pop();
-            let dim = assets.models[i].attributes.width + "x" + assets.models[i].attributes.height + assets.models[i].attributes.unitDim;
-            cont.appendChild(this.buildAsset(url, name, dim));
-        }
-        return cont;
-    }
-
-    buildAssetsFromFilter(assets) {
-        const cont = document.createElement('div');
-        cont.className += pfx + "am-assets";
-        cont.style.overflow = "visible";
-        for (let i = 0; i < assets.length; i++) {
-            //console.log(assets.models[i].attributes);
-            let url = assets[i].attributes.src;
-            let name = url.split("/").pop();
-            let dim = assets[i].attributes.width + "x" + assets[i].attributes.height + assets[i].attributes.unitDim;
-            cont.appendChild(this.buildAsset(url, name, dim));
-        }
+        assets.forEach(asset => {
+            const url = asset.get('src');
+            const dim = asset.get('width') + "x" + asset.get('height') + asset.get('unitDim');
+            cont.appendChild(this.buildAsset(url, url.split('/').pop(), dim));
+        });
         return cont;
     }
 
@@ -151,7 +135,7 @@ class Assets {
         //const filter = all.filter(block => categories.includes(block.attributes.id));
         tab.innerHTML = "";
         const filter = all.filter(asset => asset.id.split("/").pop().match(e.target.value) !== null);
-        tab.appendChild(this.buildAssetsFromFilter(filter));
+        tab.appendChild(this.buildAssets(filter));
         am.render(filter);
     }
 

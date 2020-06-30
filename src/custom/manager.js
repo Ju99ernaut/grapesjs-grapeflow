@@ -7,6 +7,7 @@ import {
     loader,
     $
 } from './../consts';
+import htmlToImage from 'html-to-image';
 
 const properties = [{
         name: 'name',
@@ -19,8 +20,8 @@ const properties = [{
         name: 'thumbnail',
         label: 'Thumbnail <i class="fa fa-link"></i>',
         placeholder: 'example.com', //todo later introduce auto generation or file field
-        before: 'https://',
-        after: false,
+        before: 'http://',
+        after: '<i class="fa fa-camera"></i>',
         url: true,
         radio: false
     },
@@ -28,8 +29,8 @@ const properties = [{
         name: 'favicon',
         label: 'Favicon <i class="fa fa-link"></i>',
         placeholder: 'example.com', //todo introduce file field
-        before: 'https://',
-        after: false,
+        before: 'http://',
+        after: '<i class="fa fa-upload"></i>',
         url: true,
         radio: false
     },
@@ -37,8 +38,8 @@ const properties = [{
         name: 'webclip',
         label: 'Webclip <i class="fa fa-link"></i>',
         placeholder: 'example.com', //todo introduce file field
-        before: 'https://',
-        after: false,
+        before: 'http://',
+        after: '<i class="fa fa-upload"></i>',
         url: true,
         radio: false
     },
@@ -597,13 +598,19 @@ class Manager {
         input.placeholder = placeholder ? placeholder : '';
         input.name = name ? name : '';
         input.value = this.properties[name] !== '' ?
-            this.properties[name].split('://').pop().split('.')[0] : this.properties[name];
+            this.properties[name].split('://').pop() : this.properties[name];
         input.addEventListener('change', e => this.checkUrl(e));
         div.appendChild(input);
 
         if (after) {
             const afterSpan = document.createElement('span');
+            afterSpan.id = name;
+            afterSpan.style.cursor = "pointer";
             afterSpan.innerHTML = after;
+            if (name == "thumbnail")
+                afterSpan.addEventListener('click', e => this.captureThumbnail(name));
+            else
+                afterSpan.addEventListener('click', e => this.openImageUpload(name));
             div.appendChild(afterSpan);
         }
 
@@ -636,6 +643,11 @@ class Manager {
             label.innerHTML = properties[prop].label;
             label.className += "left-menu-label";
             cont.appendChild(label);
+            if (properties[prop].name == 'thumbnail' || properties[prop].name == 'favicon' ||
+                properties[prop].name == 'webclip') {
+                const thumb = this.buildThumbnail(properties[prop].name, this.properties[properties[prop].name]);
+                cont.appendChild(thumb);
+            }
             const iField = properties[prop].url ? this.buildUrlFields(properties[prop].before, properties[prop].name, 'text', properties[prop].placeholder, properties[prop].after) :
                 this.buildNormalFields(properties[prop].name, 'text', properties[prop].radio, properties[prop].placeholder);
             cont.appendChild(iField);
@@ -647,6 +659,7 @@ class Manager {
     updateButton() {
         const b = document.createElement('button');
         b.id = "save-properties";
+        b.style = "margin:0;margin-left:5px";
         b.innerHTML = '<i class="fa fa-link-cloud-upload"></i>Save Properties';
         b.className += pfx + "btn-prim left-menu-input";
         //todo ensure request is called if there are changes
@@ -656,7 +669,10 @@ class Manager {
 
     updateProperties(e) {
         const clb = (res) => {
-            console.info("Properties updated...", res);
+            console.info("Properties updated", res);
+            this.updateThumbnail(document.querySelector('#thumbnail-thumb'), res.thumbnail);
+            this.updateThumbnail(document.querySelector('#favicon-thumb'), res.favicon);
+            this.updateThumbnail(document.querySelector('#webclip-thumb'), res.webclip);
         }
         const clbErr = (err) => {
             console.warn("Error updating properties", err);
@@ -665,18 +681,142 @@ class Manager {
         fs.storeProperties(this.properties, clb, clbErr);
     }
 
+    buildThumbnail(name, src) {
+        const div = document.createElement('div');
+        div.id = name + '-thumb';
+        div.style = 'height:50px;width:94%;margin:2px 5px;font-size:45px;text-align:center;border-radius:2px;border:1px solid rgba(252,252,252,0.05);background-color: rgba(255,255,255,0.055);';
+        if (!src) {
+            div.className += "fa fa-image ";
+            //div.innerHTML = "no thumbnail";
+            return div;
+        }
+        const template = `
+        <div class="gjs-sm-show" style="display: block;">
+            <div style="
+                background-image: url(&quot;${src}&quot;);
+                width: 100%;
+                background-position: center;
+                height: 49px;
+                background-size: contain;
+                background-repeat: no-repeat;">
+            </div>
+        </div>`;
+        div.innerHTML = template;
+        return div;
+    }
+
+    //?Run when capture is clicked
+    captureThumbnail(name) {
+        const am = editor.AssetManager;
+        const thumbnail = document.querySelector('#' + name + '-thumb');
+        const iframe = document.getElementsByTagName("iframe");
+        const iframeDoc = iframe[0].contentDocument;
+        htmlToImage.toJpeg(iframeDoc.body, {
+            quality: 0.5
+            //width: 1080,
+            //height: 780
+        }).then(dataUrl => {
+            //?upload
+            this.uploadImage(dataUrl, name, thumbnail, am);
+        }).catch(err => {
+            console.warn("Error taking snapshot", err); //!
+        });
+    }
+
+    //?Run when upload is clicked
+    openImageUpload(name) {
+        editor.runCommand('open-assets', {
+            target: null,
+            types: ['image'],
+            accept: 'image/*',
+            onSelect: e => {
+                this.applyToThumbnail(name, document.querySelector('#' + name + '-thumb'), e.get('src'));
+                editor.Modal.close();
+                editor.AssetManager.setTarget(null);
+            }
+        });
+    }
+
+    //?run onSave forEach property
+    updateThumbnail(target, result) {
+        target.innerHTML = `
+        <div class="gjs-sm-show" style="display: block;">
+            <div style="
+                background-image: url(&quot;${result}&quot;);
+                width: 100%;
+                background-position: center;
+                height: 49px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                ">
+            </div>
+        </div>`;
+    }
+
+    uploadImage(dataURL, name, target, am, upload = true) {
+        if (upload) {
+            const file = this.dataUrlToBlob(dataURL);
+            am.FileUploader().uploadFile({
+                dataTransfer: {
+                    files: [file]
+                }
+            }, res => {
+                //const obj = res && res.data && res.data[0];
+                const src = res.file ? editor.Config.mediaBase + res.file : '';
+                src && this.applyToThumbnail(name, target, src);
+            });
+        } else {
+            addToAssets && am.add({
+                src: dataURL,
+                name: (target.get('src') || '').split('/').pop(),
+            });
+            this.applyToThumbnail(name, target, dataURL);
+        }
+    }
+
+    applyToThumbnail(name, target, result) {
+        //apply url to set data in properties->input->set to thumbnail
+        //let t = target.set({ src: result });
+        target.className = "";
+        target.innerHTML = `<div class="gjs-sm-show" style="display: block;">
+            <div style="
+                background-image: url(&quot;${result}&quot;);
+                width: 100%;
+                background-position: center;
+                height: 49px;
+                background-size: contain;
+                background-repeat: no-repeat;">
+            </div>
+        </div>`;
+        this.properties[name] = result;
+        document.getElementsByName(name)[0].value = result.split('://').pop() //.split('.')[0]
+    }
+
+    dataUrlToBlob(dataURL) {
+        const data = dataURL.split(',');
+        const byteStr = window.atob(data[1]);
+        const type = data[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteStr.length);
+        const ia = new Uint8Array(ab);
+
+        for (let i = 0; i < byteStr.length; i++) {
+            ia[i] = byteStr.charCodeAt(i);
+        }
+
+        return new Blob([ab], {
+            type
+        });
+    }
+
     checkUrl(e) {
         const regexQuery = "^(https?|ftp)://[^\s/$.?#.[^\s*$@iS]";
         const regUrl = new RegExp(regexQuery, "i");
-        if (e.target.value !== "") {
-            if (e.target.value.match(regUrl) !== null)
-                this.properties[e.target.name] = e.target.value;
-            else if (e.target.name != "thumbnail" && e.target.name != "favicon" && e.target.name != "webclip")
-                this.properties[e.target.name] = e.target.value;
-            else {
-                console.info("Invalid url");
-                e.target.value = "";
-            }
+        const url = 'http://' + e.target.value;
+        if (url.match(regUrl) !== null)
+            this.properties[e.target.name] = url;
+        else {
+            console.info("Invalid url");
+            e.target.value = this.properties[e.target.name].split('://').pop();
         }
     }
 

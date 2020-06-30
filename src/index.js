@@ -19,6 +19,7 @@ import pluginCustomCode from 'grapesjs-custom-code';
 import pluginTyped from 'grapesjs-typed';
 import pluginImageEditor from 'grapesjs-tui-image-editor';
 import pluginLorySlider from 'grapesjs-lory-slider';
+import pluginSvgEditor from './papergrapher-editor';
 //import pluginCke from 'grapesjs-plugin-ckeditor';
 
 import commands from './commands';
@@ -28,7 +29,7 @@ import panels from './panels';
 import styles from './styles';
 import storage from './storage';
 import en from './locale/en';
-import CustomMenu from './custom/index';
+import CustomMenu from './custom';
 import breadcrumbs from './tools/breadcrumbs';
 
 export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) => {
@@ -279,7 +280,14 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
 
     // `grapesjs-tui-image-editor` plugin options
     // By setting this option to `false` will avoid loading the plugin
-    imgeditorOpts: {},
+    imgeditorOpts: {
+      height: '600px',
+      //icons: {},may need to serve these myself
+    },
+
+    // `grapesjs-papergrapher-svg-editor` plugin options
+    // By setting this option to `false` will avoid loading the plugin
+    svgeditorOpts: {},
 
     // `grapesjs-aviary` plugin options, disabled by default
     // Aviary library should be included manually
@@ -350,6 +358,7 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
     codeOpts,
     typedOpts,
     imgeditorOpts,
+    svgeditorOpts,
     sliderOpts,
     bs4Opts
     //ckeOpts
@@ -372,6 +381,7 @@ export default grapesjs.plugins.add('grapesjs-grapeflow', (editor, opts = {}) =>
   typedOpts && pluginTyped(editor, typedOpts);
   exportOpts && pluginExport(editor, exportOpts);
   imgeditorOpts && pluginImageEditor(editor, imgeditorOpts);
+  svgeditorOpts && pluginSvgEditor(editor, svgeditorOpts);
   sliderOpts && pluginLorySlider(editor, sliderOpts);
   //aviaryOpts && pluginAviary(editor, aviaryOpts);
   filestackOpts && pluginFilestack(editor, filestackOpts);

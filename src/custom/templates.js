@@ -18,6 +18,7 @@ class Templates {
         }
         const clbErr = (err) => {
             console.warn("Error loadind blocks", err);
+            this.migrate();
         }
         const fs = editor.StorageManager.get('flow-storage');
         fs.loadBlock(clb, clbErr);

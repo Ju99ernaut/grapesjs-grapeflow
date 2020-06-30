@@ -1,4 +1,5 @@
 import animSelect from './animationsSelect';
+import timingFunc from './timingFunction';
 
 export default (editor, config) => {
   const sm = editor.StyleManager;
@@ -6,6 +7,8 @@ export default (editor, config) => {
 
   //Load opt select
   animSelect(editor, sm);
+  //Load timing functions
+  timingFunc(editor, sm);
 
   sm.getSectors().reset(csm && csm.length ? csm : [{
       name: config.textLayout,
@@ -59,7 +62,7 @@ export default (editor, config) => {
             className: 'icons-flex icon-disp-flex'
           }
         ],
-      },{
+      }, {
         name: 'Z-index',
         property: 'z-index',
         type: 'integer',
@@ -670,8 +673,9 @@ export default (editor, config) => {
           },
           {
             name: 'Easing',
-            type: 'radio',
+            type: 'timing-function', //radio
             property: 'transition-timing-function',
+            defaults: 'ease',
             list: [{
                 value: 'linear',
                 title: 'linear',
@@ -767,7 +771,8 @@ export default (editor, config) => {
           },
           {
             name: 'Easing',
-            type: 'radio',
+            type: 'timing-function', //radio
+            //defaults: 'ease',
             property: 'animation-timing-function',
             list: [{
                 value: 'linear',
